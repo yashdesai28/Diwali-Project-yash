@@ -1,0 +1,33 @@
+Login - Auto Redirect to User's Dashboard + Captcha - Dhruv
+Register - Multi-Step Form + Admin Approval (max 60) - Dhruv
+Forgot Password - Dhruv
+
+Student - Anvi, Sahil, Meet, Kalash [A]
+    Dashboard - Time Table, Fees, Monthly Syllabus Progress, School Info using Panel Bar
+    Fees - Payment and Read Only
+    Profile - Update Only
+    Material View - Read Only
+    Teacher Review / Feedback using Slider - Insert Only
+
+Teacher - Yash, Pritam, Nitin, Kalash [B] 
+    Dashboard - Students Info with TreeList Std wise - Remove Student, Change Class (Fees also) for Class Teacher only
+    Material Management with TreeList and PDF Viewer - CRUD
+    Time Table Management using Scheduler Component - CRUD (Repeat allotment not allowed) 
+    Monthly Syllabus Progress - CRUD
+    Fees - Read Only
+    View Feedbacks - Read Only (Annonymous)
+
+Admin - Ayush, Ashish [C]
+    Dashboard - Student + Teacher in Hierarchical View - CRUD
+    Assign Teacher 
+    Stardard Management - max 60
+    Confirm Teacher and Student (max 60) Requests
+    School Info Management 
+    Fees 
+
+EXTRA 
+    Marks Management
+    Leave Management
+    Attendance Management
+    Complaint Management
+    Assignment Management

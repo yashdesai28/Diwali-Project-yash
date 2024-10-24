@@ -1,0 +1,28 @@
+Teacher
+
+
+Student
+
+
+Admin
+    CRUD - 
+    
+
+
+
+
+
+
+
+
+Members :
+    Kalash
+    Ayush
+    Anvi
+    Yash
+    Nitin
+    Dhruv
+    Meet
+    Ashish
+    Pritam
+    Sahil

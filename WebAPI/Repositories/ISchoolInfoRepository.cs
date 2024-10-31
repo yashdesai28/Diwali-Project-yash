@@ -4,6 +4,6 @@ namespace WebAPI.Repositories;
 
 interface ISchoolInfoRepository
 {
-    public (string?, SchoolInfo?) GetSchoolInfo();
+    public SchoolInfo GetSchoolInfo();
     public void UpdateSchoolInfo(SchoolInfo schoolInfo);
 }

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Npgsql;
 using WebAPI.Models;
 
@@ -14,18 +15,14 @@ public class SchoolInfoRepository : ISchoolInfoRepository
         this.connection = dataSource.OpenConnection();
     }
 
-    public (string?, SchoolInfo?) GetSchoolInfo()
+    public SchoolInfo GetSchoolInfo()
     {
         NpgsqlCommand getSchoolInfoCommand = new("SELECT * FROM t_school_info", connection);
         using NpgsqlDataReader reader = getSchoolInfoCommand.ExecuteReader();
 
-        if (reader.Read())
-        {
-            SchoolInfo schoolInfo = new() { SchoolAddress = reader.GetString(0), SchoolContactNumber = reader.GetString(1), PrincipalName = reader.GetString(2), PrincipalQualification = reader.GetString(3) };
-            return (null, schoolInfo);
-        }
+        if (reader.Read()) return new() { SchoolAddress = reader.GetString(0), SchoolContactNumber = reader.GetString(1), PrincipalName = reader.GetString(2), PrincipalQualification = reader.GetString(3) };
 
-        return ("Failed to fetch school information.", null);
+        throw new Exception("Failed to fetch school information.");
     }
 
     public void UpdateSchoolInfo(SchoolInfo schoolInfo)

@@ -1,5 +1,3 @@
-using WebAPI.Models;
-
 namespace WebAPI.Repositories;
 
 interface IStandardRepository

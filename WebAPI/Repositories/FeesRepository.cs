@@ -69,7 +69,7 @@ public class FeesRepository : IFeesRepository
 
     public void RemoveFeeInfo(int feesinfoid)
     {
-        NpgsqlCommand deleteFeeInfoCommand = new("DELETE FROM t_standards WHERE c_id = @id", connection);
+        NpgsqlCommand deleteFeeInfoCommand = new("DELETE FROM t_fees_structure WHERE c_id = @id", connection);
         deleteFeeInfoCommand.Parameters.AddWithValue("id", feesinfoid);
         deleteFeeInfoCommand.ExecuteNonQuery();
     }

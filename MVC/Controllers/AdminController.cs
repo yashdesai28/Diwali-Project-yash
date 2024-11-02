@@ -8,5 +8,7 @@ public class AdminController : Controller
 
     public IActionResult ManageStandard() => View();
 
+    public IActionResult ManageSchoolInfo() => View();
+
     public IActionResult ViewFeedback() => View();
 }

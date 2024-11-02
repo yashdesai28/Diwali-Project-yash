@@ -76,7 +76,7 @@ public class FeesRepository : IFeesRepository
 
     public void UpdateFeeInfo(FeesInfo.Get feesInfo)
     {
-        NpgsqlCommand addFeeStructureCommand = new("UPDATE t_fees_structure SET c_amount = @amount, c_batch_year = @batchyear,  c_standard = @standard WHERE c_id = @id", connection);
+        NpgsqlCommand addFeeStructureCommand = new("UPDATE t_fees_structure SET c_amount = @amount, c_batch_year = @batchyear, c_standard = @standard WHERE c_id = @id", connection);
         addFeeStructureCommand.Parameters.AddWithValue("amount", feesInfo.Amount);
         addFeeStructureCommand.Parameters.AddWithValue("batchyear", feesInfo.BatchYear);
         addFeeStructureCommand.Parameters.AddWithValue("standard", feesInfo.Standard);

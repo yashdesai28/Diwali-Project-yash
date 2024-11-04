@@ -17,11 +17,11 @@ public class StudentRepository : IStudentRepository
 
     public void AdmitStudent(Student.AdmitStudent student)
     {
-        NpgsqlCommand verifyStudentCommand = new("UPDATE t_users SET verified = true WHERE c_user_id = @userid", connection);
+        NpgsqlCommand verifyStudentCommand = new("UPDATE t_users SET c_verified = true WHERE c_user_id = @userid", connection);
         verifyStudentCommand.Parameters.AddWithValue("userid", student.UserId);
         verifyStudentCommand.ExecuteNonQuery();
 
-        NpgsqlCommand admitStudentCommand = new("INSERT INTO t_students(c_user_id, c_standard, c_admission_date, c_studying) VALUES(@userid, @standard, @admissiondate, @studying)");
+        NpgsqlCommand admitStudentCommand = new("INSERT INTO t_students(c_user_id, c_standard, c_admission_date, c_studying) VALUES(@userid, @standard, @admissiondate, @studying)", connection);
         admitStudentCommand.Parameters.AddWithValue("userid", student.UserId);
         admitStudentCommand.Parameters.AddWithValue("standard", student.Standard);
         admitStudentCommand.Parameters.AddWithValue("admissiondate", student.AdmissionDate);
@@ -29,10 +29,10 @@ public class StudentRepository : IStudentRepository
         admitStudentCommand.ExecuteNonQuery();
     }
 
-    public List<User.AdmissionRequest> GetAdmissionRequests()
+    public List<User.AdmitRequest> GetAdmissionRequests()
     {
-        List<User.AdmissionRequest> admissionRequests = [];
-        NpgsqlCommand getAdmissionRequestCommand = new("SELECT * FROM t_users where c_role = 'Student'", connection);
+        List<User.AdmitRequest> admissionRequests = [];
+        NpgsqlCommand getAdmissionRequestCommand = new("SELECT * FROM t_users where c_role = 'Student' AND c_verified = false", connection);
         using NpgsqlDataReader reader = getAdmissionRequestCommand.ExecuteReader();
         while (reader.Read())
         {

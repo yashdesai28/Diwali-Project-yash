@@ -20,6 +20,28 @@ namespace WebAPI.Repositories
             NpgsqlDataSource dataSource = NpgsqlDataSource.Create(connectionString);
             this.connection = dataSource.OpenConnection();
         }
+
+        public int DeleteStudentDetailsWithFees(int id)
+        {
+            using (NpgsqlCommand deleteStudentDetailCommand = new("update t_students set c_studying=false where c_user_id=@id ", connection))
+            {
+                deleteStudentDetailCommand.Parameters.AddWithValue("@id", id);
+                return deleteStudentDetailCommand.ExecuteNonQuery();
+            }
+
+        }
+
+        public int updateStudentDetailsWithFees(int id, string standers, bool studying)
+        {
+            using (NpgsqlCommand updateStudentDetailCommand = new("update t_students set c_studying=@studying,c_standard=@standard where c_user_id=@id ", connection))
+            {
+                updateStudentDetailCommand.Parameters.AddWithValue("@id", id);
+                updateStudentDetailCommand.Parameters.AddWithValue("@studying", studying);
+                updateStudentDetailCommand.Parameters.AddWithValue("@standard", standers);
+                return updateStudentDetailCommand.ExecuteNonQuery();
+            }
+        }
+
         public List<Student.StudentDetailsWithFees> StudentDetailsWithFees(int id)
         {
             int standard = 0;

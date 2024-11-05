@@ -26,18 +26,53 @@ namespace WebAPI.Controllers
         {
             Console.WriteLine("hello");
             List<Teacherinfo> teacherinfos = timeTable.GetTeacherinfos();
-
             return Ok(teacherinfos);
         }
+
 
         [HttpGet]
         [Route("getclassWiseStudent")]
         public IActionResult getclassWiseStudent(int id)
         {
             List<Student.StudentDetailsWithFees> studentDetailsWithFees = classWiseStudent.StudentDetailsWithFees(id);
-
             return Ok(studentDetailsWithFees);
+        }
+
+        [HttpDelete]
+        [Route("deleteclassWiseStudent")]
+        public IActionResult deleteclassWiseStudent(int id)
+        {
+            int row = classWiseStudent.DeleteStudentDetailsWithFees(id);
+            if (row > 0)
+            {
+                return Ok(new { Message = "Student deleted successfully" });
+            }
+            else
+            {
+                return Ok(new { Message = "Student not deleted" });
+            }
 
         }
+
+        [HttpPatch]
+        [Route("updateclassWiseStudent")]
+        public IActionResult updateclassWiseStudent(int id, string standers, bool studying)
+        {
+
+            int row = classWiseStudent.updateStudentDetailsWithFees(id, standers, studying);
+
+            if (row > 0)
+            {
+                return Ok(new { Message = "Student Update successfully" });
+            }
+            else
+            {
+                return Ok(new { Message = "Student not update" });
+            }
+
+
+
+        }
+
     }
 }

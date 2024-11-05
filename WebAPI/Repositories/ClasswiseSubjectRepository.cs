@@ -23,14 +23,14 @@ public class ClasswiseSubjectRepository : IClasswiseSubjectRepository
         addClasswiseSubjectCommand.ExecuteNonQuery();
     }
 
-    public List<ClasswiseSubjects.Default> GetClasswiseSubjects()
+    public List<ClasswiseSubjects.Get> GetClasswiseSubjects()
     {
-        List<ClasswiseSubjects.Default> classwiseSubjectDetails = [];
-        NpgsqlCommand getClasswiseSubjectCommand = new("SELECT * FROM t_classwise_subjects", connection);
+        List<ClasswiseSubjects.Get> classwiseSubjectDetails = [];
+        NpgsqlCommand getClasswiseSubjectCommand = new("SELECT cws.c_id, tt.c_teacher_id, tu.c_name, cws.c_subject_id, ts.c_subject_name, cws.c_standard FROM t_classwise_subjects cws INNER JOIN t_teachers tt ON cws.c_teacher_id = tt.c_teacher_id INNER JOIN t_subjects ts ON cws.c_subject_id = ts.c_subject_id INNER JOIN t_users tu ON tt.c_user_id = tu.c_user_id", connection);
         using NpgsqlDataReader reader = getClasswiseSubjectCommand.ExecuteReader();
         while (reader.Read())
         {
-            classwiseSubjectDetails.Add(new() { Id = reader.GetInt16(0), Standard = reader.GetString(1), TeacherId = reader.GetInt16(3), SubjectId = reader.GetInt16(2) });
+            classwiseSubjectDetails.Add(new() { Id = reader.GetInt16(0), TeacherId = reader.GetInt32(1), TeacherName = reader.GetString(2), SubjectId = reader.GetInt16(3), SubjectName = reader.GetString(4), Standard = reader.GetString(5) });
         }
         return classwiseSubjectDetails;
     }

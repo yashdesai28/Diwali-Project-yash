@@ -513,7 +513,7 @@ public class AdminController : ControllerBase
     {
         try
         {
-            List<ClasswiseSubjects.Default> classwiseSubjects = classwiseSubjectRepository.GetClasswiseSubjects();
+            List<ClasswiseSubjects.Get> classwiseSubjects = classwiseSubjectRepository.GetClasswiseSubjects();
             return StatusCode(StatusCodes.Status200OK, classwiseSubjects);
         }
         catch (Exception e)
@@ -522,13 +522,13 @@ public class AdminController : ControllerBase
         }
     }
 
-    [HttpPost("AddClasswiseSubjects")]
+    [HttpPost("AddClasswiseSubject")]
     [Consumes("multipart/form-data")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult AddClasswiseSubjects([FromForm] ClasswiseSubjects.Post details)
+    public IActionResult AddClasswiseSubject([FromForm] ClasswiseSubjects.Post details)
     {
         try
         {
@@ -569,21 +569,21 @@ public class AdminController : ControllerBase
         }
     }
 
-    [HttpPut("UpdateClasswiseSubjects")]
+    [HttpPut("UpdateClasswiseSubject")]
     [Consumes("multipart/form-data")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult UpdateClasswiseSubjects([FromForm] ClasswiseSubjects.Default details)
+    public IActionResult UpdateClasswiseSubject([FromForm] ClasswiseSubjects.Default details)
     {
         try
         {
             if (ModelState.IsValid)
             {
                 classwiseSubjectRepository.UpdateClasswiseSubject(details);
-                return StatusCode(StatusCodes.Status200OK, $"Class Subject details updated successfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Class Subject details updated successfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
         }

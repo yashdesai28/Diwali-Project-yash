@@ -23,8 +23,8 @@ namespace WebAPI.Repositories
         public List<Teacherinfo> GetTeacherinfos()
         {
             List<Teacherinfo> teacherinfos = new List<Teacherinfo>();
-            NpgsqlCommand getStandardsCommand = new("SELECT c_user_id,c_name,c_image from t_users where c_role='Teacher'", connection);
-            using NpgsqlDataReader reader = getStandardsCommand.ExecuteReader();
+            NpgsqlCommand getTeacherinfosCommand = new("SELECT c_user_id,c_name,c_image from t_users where c_role='Teacher'", connection);
+            using NpgsqlDataReader reader = getTeacherinfosCommand.ExecuteReader();
             while (reader.Read())
             {
                 var teacherinfo = new Teacherinfo{userid = reader.GetInt32(0),teachername = reader.GetString(1),img = reader.GetString(2)};

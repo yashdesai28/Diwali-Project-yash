@@ -385,7 +385,7 @@ public class AdminController : ControllerBase
             if (ModelState.IsValid)
             {
                 subjectRepository.AddSubject(subjectname);
-                return StatusCode(StatusCodes.Status200OK, $"Subject {subjectname} added sucessfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Subject {subjectname} added sucessfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please provide a subject name." });
         }
@@ -401,14 +401,14 @@ public class AdminController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult RemoveSubject([FromQuery] int feeinfoid)
+    public IActionResult RemoveSubject([FromQuery] int subjectid)
     {
         try
         {
             if (ModelState.IsValid)
             {
-                subjectRepository.RemoveSubject(feeinfoid);
-                return StatusCode(StatusCodes.Status200OK, new { message = $"Subject with id {feeinfoid} removed successfully." });
+                subjectRepository.RemoveSubject(subjectid);
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Subject with id {subjectid} removed successfully." });
             }
 
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please provide an id to remove the subject." });
@@ -535,7 +535,7 @@ public class AdminController : ControllerBase
             if (ModelState.IsValid)
             {
                 classwiseSubjectRepository.AddClasswiseSubject(details);
-                return StatusCode(StatusCodes.Status200OK, $"Subject added sucessfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Subject added sucessfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
         }

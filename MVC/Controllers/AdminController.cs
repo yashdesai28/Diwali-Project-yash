@@ -9,4 +9,5 @@ public class AdminController : Controller
     public IActionResult ManageFeeStructure() => View();
     public IActionResult ManageSchoolInfo() => View();
     public IActionResult ViewFeedback() => View();
+    public IActionResult ManageSubjects() => View();
 }

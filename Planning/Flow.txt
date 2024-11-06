@@ -12,7 +12,7 @@ Student - Anvi, Sahil, Meet, Kalash [A]
 Teacher - Yash, Pritam, Nitin, Kalash [B] 
     Dashboard - Students Info with TreeList Std wise - Remove Student, Change Class (Fees also) for Class Teacher only
     Material Management with TreeList and PDF Viewer - CRUD
-    Time Table Management using Scheduler Component - CRUD (Repeat allotment not allowed) 
+    Time Table Management using Scheduler Component - CRUD (Repeat allotment not allowed)
     Monthly Syllabus Progress - CRUD
     Fees - Read Only
     View Feedbacks - Read Only (Annonymous)

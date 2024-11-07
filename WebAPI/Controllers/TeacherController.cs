@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Kendo_MVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using WebAPI.Models;
 using WebAPI.Repositories;
@@ -60,7 +61,6 @@ namespace WebAPI.Controllers
         {
 
             int row = classWiseStudent.updateStudentDetailsWithFees(id, standers, studying);
-
             if (row > 0)
             {
                 return Ok(new { Message = "Student Update successfully" });
@@ -69,9 +69,24 @@ namespace WebAPI.Controllers
             {
                 return Ok(new { Message = "Student not update" });
             }
+        }
 
+        [HttpGet]
+        [Route("timetable")]
+        public IActionResult timetable()
+        {
+            Console.WriteLine("thime table");
+            (List<string> standers, List<Timetable> timetables) = timeTable.Getsatnders();
+            return Ok(new { standers, timetables });
+        }
 
-
+        [HttpGet]
+        [Route("timetableForTeacher")]
+        public IActionResult timetableForTeacher()
+        {
+            Console.WriteLine("thime table");
+            (List<string> standers, List<Timetable> timetables) = timeTable.GetTeacherTimetable();
+            return Ok(new { standers, timetables });
         }
 
     }

@@ -23,9 +23,14 @@ namespace MVC.Controllers
             return View("Timetable");
         }
 
-         public IActionResult TeacherTimetable()
+        public IActionResult TeacherTimetable()
         {
             return View("TeacherTimetable");
+        }
+
+        public IActionResult TeacherDashboard(){
+            
+            return View("TeacherDashboard");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

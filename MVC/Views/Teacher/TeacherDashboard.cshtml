@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .image-large {
+
+            width: 100%;
+        }
+
+        .k-card {
+            width: 23%;
+            /* 100% / 4 - to fit 4 cards in a row */
+            margin: 1%;
+            /* Adjusts spacing between cards */
+        }
+
+        .k-card-horizontal .image-large {
+            max-width: 100%;
+        @*
+            max-height:
+            50%;
+            *@
+        }
+
+        .k-card-action>.k-button {
+            width: 100%;
+        }
+
+        .k-card-separator {
+            flex: 0 0 auto;
+        }
+
+        .k-actions-stretched {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .k-actions {
+            padding: 0;
+            color: rgb(255, 94, 0);
+        }
+
+        .k-card-header {
+            border-color: #d5d5d5;
+            color: #ffffff;
+            background-color: #124732;
+        }
+    </style>
+</head>
+
+<body>
+
+
+
+    <div id="cards-container" class="cards-container k-rtl"></div>
+
+
+<script>
+$(document).ready(function () {
+    $.ajax({
+        url: 'http://localhost:5064/api/Teacher/getclassWiseStudent',
+        method: 'GET',
+        data: { id: 1 },  // Pass the 'id' as a query parameter
+        success: function (data) {
+            renderCards(data);
+        },
+        error: function (error) {
+            console.error("Error fetching data:", error);
+        }
+    });
+});
+
+function renderCards(data) {
+    const container = $('#cards-container');
+    container.empty(); // Clear any existing content
+
+    data.forEach(item => {
+        const card = $(`
+            <div class="k-card k-card-horizontal">
+                <!-- Action icons on the left side -->
+                <div class="k-actions k-card-actions k-actions-vertical k-actions-stretched"
+                    style="width: 50px; align-items: center;">
+                    <button class="k-button k-button-flat k-button-md k-rounded-md delete-button" data-id="${item.user_id}">
+                        <span class="k-icon k-i-trash"></span> <!-- Delete Icon -->
+                    </button>
+                    <span class="k-card-separator"></span>
+                    <button class="k-button k-button-flat k-button-md k-rounded-md update-button" data-id="${item.user_id}">
+                        <span class="k-icon k-i-edit"></span> <!-- Update Icon -->
+                    </button>
+                </div>
+
+                <!-- Card content on the right side -->
+                <div>
+                    <div class="k-card-header">
+                        <h5 class="k-card-title">${item.name}</h5>
+                        <h6 class="k-card-subtitle">standard: ${item.standard}</h6>
+                    </div>
+                    <img alt="${item.name} Profile" class="k-card-media image-large" src="/${item.image}" />
+                    <div class="k-card-body">
+                        <p>
+                            <strong>Email:</strong> ${item.email} <br />
+                            <strong>Mobile:</strong> ${item.mobileNumber} <br />
+                            <strong>birthDate:</strong> <span id="birthDateDisplay-${item.user_id}">${item.birthDate}</span><br />
+                            <strong>Address:</strong> ${item.address} <br />
+                            <strong>Fee Status:</strong> ${item.feeStatus}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // Format and display birthDate
+        const birthDateString = item.birthDate;
+        const birthDate = new Date(birthDateString);
+        const formattedDate = birthDate.toLocaleDateString('en-GB'); // Example: DD/MM/YYYY
+
+        // Use the unique ID for each card
+        const birthDateElement = document.getElementById(`birthDateDisplay-${item.user_id}`);
+        if (birthDateElement) {
+            birthDateElement.innerText = formattedDate;
+        }
+
+        container.append(card);
+    });
+
+    // Add event listeners for the Update and Delete buttons
+    $('.update-button').on('click', function () {
+        const userId = $(this).data('id');
+        updateUser(userId);
+    });
+
+    $('.delete-button').on('click', function () {
+        const userId = $(this).data('id');
+        deleteUser(userId);
+    });
+}
+
+function updateUser(userId) {
+    // Implement your update functionality here
+    console.log('Updating user with ID:', userId);
+}
+
+function deleteUser(userId) {
+    // Implement your delete functionality here
+    console.log('Deleting user with ID:', userId);
+}
+</script>
+
+</body>
+
+</html>

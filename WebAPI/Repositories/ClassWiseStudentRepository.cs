@@ -64,7 +64,7 @@ namespace WebAPI.Repositories
             if (standard != 0)
             {
 
-                using (NpgsqlCommand getStudentDetailsWithFeesCommand = new("select u.c_user_id,u.c_image,u.c_name,u.c_email,u.c_mobile_number,u.c_gender,u.c_birth_date,u.c_address,s.c_enrollment_number,s.c_admission_date,s.c_standard,p.c_status  from t_students as s join t_users as u on u.c_user_id=s.c_user_id full join t_payments as p on s.c_user_id=p.c_user_id where s.c_standard=@standard and s.c_studying=true and u.c_verified=true", connection))
+                using (NpgsqlCommand getStudentDetailsWithFeesCommand = new("SELECT u.c_user_id,u.c_image,u.c_name,u.c_email,u.c_mobile_number,u.c_gender,u.c_birth_date,u.c_address,s.c_enrollment_number,s.c_admission_date,s.c_standard, p.c_status FROM t_students AS s JOIN t_users AS u ON u.c_user_id = s.c_user_id FULL JOIN t_payments AS p ON s.c_user_id = p.c_user_id AND p.c_currentstandard = @standard WHERE s.c_standard = @standard AND s.c_studying = true AND u.c_verified = true;", connection))
                 {
 
                     getStudentDetailsWithFeesCommand.Parameters.AddWithValue("@standard", standard.ToString());

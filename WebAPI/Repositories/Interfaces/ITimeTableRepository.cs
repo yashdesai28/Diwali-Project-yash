@@ -10,7 +10,7 @@ namespace WebAPI.Repositories.Interfaces
     public interface ITimeTableRepository
     {
         public List<Teacherinfo> GetTeacherinfos();
-        public (List<string>, List<Timetable>) Getsatnders();
+        public (List<string>, List<Timetable>) GetTimeTable();
         public (List<string>, List<Timetable>) GetTeacherTimetable();
     }
 }

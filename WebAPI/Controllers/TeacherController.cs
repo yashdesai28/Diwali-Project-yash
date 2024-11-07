@@ -15,10 +15,12 @@ namespace WebAPI.Controllers
     {
         private readonly TimeTableRepository timeTable;
         private readonly ClassWiseStudentRepository classWiseStudent;
+        private readonly StandardRepository standard;
         public TeacherController(IConfiguration configuration)
         {
             timeTable = new(configuration);
             classWiseStudent = new(configuration);
+            standard = new(configuration);
         }
 
         [HttpGet]
@@ -76,7 +78,7 @@ namespace WebAPI.Controllers
         public IActionResult timetable()
         {
             Console.WriteLine("thime table");
-            (List<string> standers, List<Timetable> timetables) = timeTable.Getsatnders();
+            (List<string> standers, List<Timetable> timetables) = timeTable.GetTimeTable();
             return Ok(new { standers, timetables });
         }
 
@@ -87,6 +89,22 @@ namespace WebAPI.Controllers
             Console.WriteLine("thime table");
             (List<string> standers, List<Timetable> timetables) = timeTable.GetTeacherTimetable();
             return Ok(new { standers, timetables });
+        }
+
+        [HttpGet]
+        [Route("Getstandards")]
+        public IActionResult Getstandards()
+        {
+            List<string> standards = standard.GetStandards();
+            return Ok(standards);
+        }
+
+        [HttpGet]
+        [Route("GetstandardsForTeacher")]
+        public IActionResult GetstandardsForTeacher(int id)
+        {
+            List<string> standards = timeTable.GetStandards(id);
+            return Ok(standards);
         }
 
     }

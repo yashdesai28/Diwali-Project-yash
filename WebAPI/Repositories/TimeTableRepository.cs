@@ -34,7 +34,7 @@ namespace WebAPI.Repositories
             return teacherinfos;
         }
 
-        public (List<string>, List<Timetable>) Getsatnders()
+        public (List<string>, List<Timetable>) GetTimeTable()
         {
             List<string> standers = [];
             List<Timetable> timetables = new List<Timetable>();
@@ -67,6 +67,19 @@ namespace WebAPI.Repositories
                 }
             }
             return (standers, timetables);
+        }
+
+        public List<string> GetStandards(int id)
+        {
+            List<string> standards = [];
+            NpgsqlCommand getStandardsCommand = new("select c.c_standard from t_classwise_subjects as c join t_teachers as t on t.c_teacher_id=c.c_teacher_id join t_users as u on u.c_user_id=t.c_user_id  where t.c_user_id=@id ORDER BY CAST(c.c_standard as int)", connection);
+            getStandardsCommand.Parameters.AddWithValue("@id", id);
+            using NpgsqlDataReader reader = getStandardsCommand.ExecuteReader();
+            while (reader.Read())
+            {
+                standards.Add(reader.GetString(0));
+            }
+            return standards;
         }
 
         public (List<string>, List<Timetable>) GetTeacherTimetable()

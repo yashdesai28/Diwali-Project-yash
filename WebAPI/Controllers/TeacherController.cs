@@ -45,6 +45,7 @@ namespace WebAPI.Controllers
         [Route("deleteclassWiseStudent")]
         public IActionResult deleteclassWiseStudent(int id)
         {
+            Console.WriteLine("delete id = " + id);
             int row = classWiseStudent.DeleteStudentDetailsWithFees(id);
             if (row > 0)
             {
@@ -59,10 +60,10 @@ namespace WebAPI.Controllers
 
         [HttpPatch]
         [Route("updateclassWiseStudent")]
-        public IActionResult updateclassWiseStudent(int id, string standers, bool studying)
+        public IActionResult updateclassWiseStudent([FromBody] StudentUpdateForTeacher model)
         {
 
-            int row = classWiseStudent.updateStudentDetailsWithFees(id, standers, studying);
+            int row = classWiseStudent.updateStudentDetailsWithFees(model.id, model.standers, model.studying);
             if (row > 0)
             {
                 return Ok(new { Message = "Student Update successfully" });

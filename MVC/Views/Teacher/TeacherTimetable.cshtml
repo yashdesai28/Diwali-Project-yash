@@ -16,7 +16,7 @@
     <div id="scheduler"></div>
     <script>
         $(document).ready(function () {
-            let teacherId = 2; // Set this to the correct teacher ID as needed
+            let teacherId = 1; // Set this to the correct teacher ID as needed
             let data;
 
             // Fetch data using AJAX
@@ -149,7 +149,7 @@
                         const scheduler = $("#scheduler").data("kendoScheduler");
 
                         // Set the desired user ID here to filter for that teacher's lectures.
-                        const desiredUserId = 2;  // Replace with the c_user_id you want to filter by
+                        const desiredUserId = 1;  // Replace with the c_user_id you want to filter by
 
                         // Generate timetable data for the selected standard
                         const filteredData = generateTimeTable(selectedStandard);

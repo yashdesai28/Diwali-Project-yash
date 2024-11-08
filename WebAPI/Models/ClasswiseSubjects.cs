@@ -12,6 +12,16 @@ public class ClasswiseSubjects
         public required string Standard { get; set; }
     }
 
+    public class Get
+    {
+        public int Id { get; set; }
+        public int TeacherId { get; set; }
+        public required string TeacherName { get; set; }
+        public int SubjectId { get; set; }
+        public required string SubjectName { get; set; }
+        public required string Standard { get; set; }
+    }
+
     public class Post
     {
         [Required(ErrorMessage = "Please select the subject teacher.")]

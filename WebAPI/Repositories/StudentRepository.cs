@@ -53,6 +53,42 @@ public class StudentRepository : IStudentRepository
         return studentDetails;
     }
 
+    public List<User.UpdateDetails> GetUpdateProfileListById(int userId)
+    {
+
+        List<User.UpdateDetails> updateStudentDetails = new List<User.UpdateDetails>();
+
+
+        string query = "SELECT c_user_id,c_image, c_name, c_email, c_mobile_number, c_gender, c_birth_date, c_address FROM t_users WHERE c_user_id = @userId";
+
+        using (NpgsqlCommand GetUpdateProfileListByIdCommand = new NpgsqlCommand(query, connection))
+        {
+
+            GetUpdateProfileListByIdCommand.Parameters.AddWithValue("@userId", userId);
+
+
+            using (NpgsqlDataReader reader = GetUpdateProfileListByIdCommand.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    updateStudentDetails.Add(new User.UpdateDetails
+                    {
+                        UserId = reader.GetInt32(0),
+                        Imagepath = reader.GetString(1),
+                        Name = reader.GetString(2),
+                        Email = reader.GetString(3),
+                        MobileNumber = reader.GetString(4),
+                        Gender = EnumHelper.GetGender(reader.GetString(5)),
+                        BirthDate = reader.GetDateTime(6),
+                        Address = reader.GetString(7),
+                    });
+                }
+            }
+        }
+        return updateStudentDetails;
+    }
+
+
     public List<Student.StudentDetails> GetStudentsListByStandard(int standard)
     {
         List<Student.StudentDetails> studentDetails = [];
@@ -65,6 +101,66 @@ public class StudentRepository : IStudentRepository
         }
         return studentDetails;
     }
+
+    public bool UpdateStudentProfile(User.UpdateDetails updateDetails)
+    {
+        try
+        {
+
+            string? imagePath = null;
+
+            if (updateDetails.Image != null)
+            {
+
+                string imagesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "SchoolData");
+                if (!Directory.Exists(imagesDirectory))
+                {
+                    Directory.CreateDirectory(imagesDirectory);
+                }
+
+
+                string fileName = $"user_{updateDetails.UserId}_{Guid.NewGuid()}{Path.GetExtension(updateDetails.Image.FileName)}";
+                imagePath = Path.Combine("images", fileName);
+                string fullImagePath = Path.Combine(imagesDirectory, fileName);
+
+
+                using var stream = new FileStream(fullImagePath, FileMode.Create);
+                updateDetails.Image.CopyTo(stream);
+            }
+
+
+            var query = @"
+            UPDATE t_users 
+            SET 
+                c_name = @Name,
+                c_email = @Email,
+                c_mobile_number = @MobileNumber,
+                c_gender = @Gender,
+                c_birth_date = @BirthDate,
+                c_address = @Address,
+                c_image = @ImagePath -- store the image path
+            WHERE 
+                c_user_id = @UserId";
+
+            using var command = new NpgsqlCommand(query, connection);
+            command.Parameters.AddWithValue("UserId", updateDetails.UserId);
+            command.Parameters.AddWithValue("Name", updateDetails.Name);
+            command.Parameters.AddWithValue("Email", updateDetails.Email);
+            command.Parameters.AddWithValue("MobileNumber", updateDetails.MobileNumber);
+            command.Parameters.AddWithValue("Gender", updateDetails.Gender.ToString());
+            command.Parameters.AddWithValue("BirthDate", updateDetails.BirthDate);
+            command.Parameters.AddWithValue("Address", updateDetails.Address);
+            command.Parameters.AddWithValue("ImagePath", (object?)imagePath ?? DBNull.Value);
+
+            int rowsAffected = command.ExecuteNonQuery();
+            return rowsAffected > 0;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to update student profile", ex);
+        }
+    }
+
 
     public void UpdateStudentDetails(Student.AdminUpdate studentDetails)
     {

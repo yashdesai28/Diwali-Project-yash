@@ -63,6 +63,8 @@ public class User
         public DateTime BirthDate { get; set; }
         [Required(ErrorMessage = "Please enter your address.", AllowEmptyStrings = false)]
         public required string Address { get; set; }
+        
+        public string? Imagepath{get; set;}
     }
 
     public class ChangePassword

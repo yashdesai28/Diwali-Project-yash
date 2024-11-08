@@ -5,10 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
+
 builder.Services.AddCors(policy => {
     policy.AddPolicy("CorsPolicy", rules => {
         rules.AllowAnyMethod();
         rules.AllowAnyOrigin();
+        rules.AllowAnyHeader();
     });
 });
 

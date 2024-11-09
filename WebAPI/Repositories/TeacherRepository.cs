@@ -62,4 +62,11 @@ public class TeacherRepository : ITeacherRepository
         updateStudentCommand.Parameters.AddWithValue("teacherid", teacherDetails.TeacherId);
         updateStudentCommand.ExecuteNonQuery();
     }
+
+    public void RejectCandidate(int userid)
+    {
+        NpgsqlCommand rejectCandidateCommand = new("DELETE FROM t_users WHERE c_user_id = @id", connection);
+        rejectCandidateCommand.Parameters.AddWithValue("id", userid);
+        rejectCandidateCommand.ExecuteNonQuery();
+    }
 }

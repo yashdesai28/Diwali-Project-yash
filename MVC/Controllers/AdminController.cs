@@ -13,4 +13,6 @@ public class AdminController : Controller
     public IActionResult ManageClasswiseSubjects() => View();
     public IActionResult StudentDetails() => View();
     public IActionResult TeacherDetails() => View();
+    public IActionResult HireTeachers() => View();
+    public IActionResult AdmitStudents() => View();
 }

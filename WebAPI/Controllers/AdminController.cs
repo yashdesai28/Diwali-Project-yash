@@ -319,7 +319,7 @@ public class AdminController : ControllerBase
             if (ModelState.IsValid)
             {
                 studentRepository.AdmitStudent(student);
-                return StatusCode(StatusCodes.Status200OK, $"Student with {student.UserId} admitted sucessfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Student with {student.UserId} admitted sucessfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
         }
@@ -469,7 +469,7 @@ public class AdminController : ControllerBase
             if (ModelState.IsValid)
             {
                 teacherRepository.HireTeacher(teacher);
-                return StatusCode(StatusCodes.Status200OK, $"Teacher with {teacher.UserId} hired sucessfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Teacher with {teacher.UserId} hired sucessfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
         }
@@ -586,6 +586,32 @@ public class AdminController : ControllerBase
                 return StatusCode(StatusCodes.Status200OK, new { message = $"Class Subject details updated successfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        }
+    }
+
+    // Common rejection
+
+    [HttpDelete("RejectCandidate")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public IActionResult RejectCandidate([FromQuery] int id)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                teacherRepository.RejectCandidate(id);
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Candidate with id {id} is rejected." });
+            }
+
+            return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please provide an id." });
         }
         catch (Exception e)
         {

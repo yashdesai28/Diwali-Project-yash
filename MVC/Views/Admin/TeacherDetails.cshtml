@@ -38,7 +38,7 @@
                         complete: function (data) {
                             if (data.status === 200) {
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
-                                studentGrid.data("kendoGrid").dataSource.read();
+                                teacherGrid.data("kendoGrid").dataSource.read();
                             } else {
                                 $("#notification").getKendoNotification().show(data.statusText, "error");
                             }

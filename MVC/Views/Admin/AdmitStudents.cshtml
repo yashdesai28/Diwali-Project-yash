@@ -1,10 +1,10 @@
 @{
-    ViewData["title"] = "Admin: Hire Teachers";
+    ViewData["title"] = "Admin: Admit Students";
 }
 
-<h1 class="mb-3">Hire Teachers</h1>
+<h1 class="mb-3">Admit Students</h1>
 <span id="notification"></span>
-<div id="hireteacherGrid"></div>
+<div id="admitStudentsGrid"></div>
 
 @section Scripts {
     <script>
@@ -14,15 +14,15 @@
             }
         });
 
-        const hireteacherGrid = $("#hireteacherGrid").kendoGrid({
+        const admitStudentsGrid = $("#admitStudentsGrid").kendoGrid({
             dataSource: {
                 transport: {
                     read: {
-                        url: `${apihost}/api/Admin/GetJobRequests`,
+                        url: `${apihost}/api/Admin/GetAdmissionRequest`,
                         dataType: "json",
                         complete: function (data) {
                             if (data.status === 200) {
-                                $("#notification").getKendoNotification().show("Job requests fetched successfully", "info");
+                                $("#notification").getKendoNotification().show("Admission requests fetched successfully", "info");
                             } else {
                                 $("#notification").getKendoNotification().show(data.statusText, "error");
                             }
@@ -30,7 +30,7 @@
                     },
 
                     update: {
-                        url: `${apihost}/api/Admin/HireTeacher`,
+                        url: `${apihost}/api/Admin/AdmitStudent`,
                         dataType: "json",
                         processData: false,
                         contentType: false,
@@ -38,7 +38,7 @@
                         complete: function (data) {
                             if (data.status === 200) {
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
-                                hireteacherGrid.data("kendoGrid").dataSource.read();
+                                admitStudentsGrid.data("kendoGrid").dataSource.read();
                             } else {
                                 $("#notification").getKendoNotification().show(data.statusText, "error");
                             }
@@ -50,7 +50,7 @@
                         complete: function (data) {
                             if (data.status === 200) {
                                 $("#notification").getKendoNotification().show(data.responseJSON.message, "info");
-                                hireteacherGrid.data("kendoGrid").dataSource.read();
+                                admitStudentsGrid.data("kendoGrid").dataSource.read();
                             } else {
                                 $("#notification").getKendoNotification().show(data.statusText, "error");
                             }
@@ -60,7 +60,6 @@
                         if (type === "update") {
                             const formData = new FormData();
                             formData.append("userId", data.userId);
-                            formData.append("qualification", "PhD");
                             formData.append("standard", data.standard);
                             return formData;
                         }
@@ -116,7 +115,7 @@
                     }
                 },
                 {
-                    command: [{ name: "edit", text: "Hire" }, "destroy"], title: "Action"
+                    command: [{ name: "edit", text: "Admit" }, "destroy"], title: "Action"
                 }
             ],
             editable: "popup",

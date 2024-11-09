@@ -8,4 +8,5 @@ interface ITeacherRepository
     public void HireTeacher(Teacher.HireTeacher teacher);
     public List<Teacher.TeacherDetails> GetTeacherList();
     public void UpdateTeacherDetails(Teacher.AdminUpdate teacherDetails);
+    public void RejectCandidate(int userid);
 }

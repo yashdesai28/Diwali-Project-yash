@@ -7,7 +7,7 @@ public class Teacher
         public required int TeacherId { get; set; }
         public required string Image { get; set; }
         public required string Name { get; set; }
-        public required string Standard { get; set; }
+        public string? Standard { get; set; }
         public required string Qualification { get; set; }
         public required string Email { get; set; }
         public required string MobileNumber { get; set; }
@@ -30,7 +30,7 @@ public class Teacher
     public class AdminUpdate
     {
         public int TeacherId { get; set; }
-        public required string Standard { get; set; }
+        public string? Standard { get; set; }
         public bool Working { get; set; }
     }
 }

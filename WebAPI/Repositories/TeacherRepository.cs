@@ -34,7 +34,7 @@ public class TeacherRepository : ITeacherRepository
         using NpgsqlDataReader reader = getAdmissionRequestCommand.ExecuteReader();
         while (reader.Read())
         {
-            teacherDetails.Add(new() { TeacherId = reader.GetInt32(0), Image = reader.GetString(1), Name = reader.GetString(2), Standard = reader.GetString(3), Qualification = reader.GetString(4), Email = reader.GetString(5), MobileNumber = reader.GetString(6), Gender = EnumHelper.GetGender(reader.GetString(7)), BirthDate = reader.GetDateTime(8), Address = reader.GetString(9), JoiningDate = reader.GetDateTime(10), Working = reader.GetBoolean(11) });
+            teacherDetails.Add(new() { TeacherId = reader.GetInt32(0), Image = reader.GetString(1), Name = reader.GetString(2), Standard = reader.IsDBNull(3) ? null : reader.GetString(3), Qualification = reader.GetString(4), Email = reader.GetString(5), MobileNumber = reader.GetString(6), Gender = EnumHelper.GetGender(reader.GetString(7)), BirthDate = reader.GetDateTime(8), Address = reader.GetString(9), JoiningDate = reader.GetDateTime(10), Working = reader.GetBoolean(11) });
         }
         return teacherDetails;
     }
@@ -57,7 +57,7 @@ public class TeacherRepository : ITeacherRepository
     public void UpdateTeacherDetails(Teacher.AdminUpdate teacherDetails)
     {
         NpgsqlCommand updateStudentCommand = new("UPDATE t_teachers SET c_standard = @standard, c_working = @working WHERE c_teacher_id = @teacherid", connection);
-        updateStudentCommand.Parameters.AddWithValue("standard", teacherDetails.Standard);
+        updateStudentCommand.Parameters.AddWithValue("standard", string.IsNullOrEmpty(teacherDetails.Standard) ? DBNull.Value : teacherDetails.Standard);
         updateStudentCommand.Parameters.AddWithValue("working", teacherDetails.Working);
         updateStudentCommand.Parameters.AddWithValue("teacherid", teacherDetails.TeacherId);
         updateStudentCommand.ExecuteNonQuery();

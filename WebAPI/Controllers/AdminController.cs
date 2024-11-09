@@ -343,7 +343,7 @@ public class AdminController : ControllerBase
             if (ModelState.IsValid)
             {
                 studentRepository.UpdateStudentDetails(studentDetails);
-                return StatusCode(StatusCodes.Status200OK, $"Student details updated successfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = $"Student details updated successfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
         }
@@ -420,12 +420,12 @@ public class AdminController : ControllerBase
     }
 
     // Teacher Management
-    [HttpGet("GetTeachers")]
+    [HttpGet("GetTeacherDetails")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult GetTeachers()
+    public IActionResult GetTeacherDetails()
     {
         try
         {
@@ -493,7 +493,7 @@ public class AdminController : ControllerBase
             if (ModelState.IsValid)
             {
                 teacherRepository.UpdateTeacherDetails(teacherDetails);
-                return StatusCode(StatusCodes.Status200OK, $"Teacher details updated successfully.");
+                return StatusCode(StatusCodes.Status200OK, new { message = "Teacher details updated successfully." });
             }
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please fill out the form properly." });
         }

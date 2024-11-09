@@ -1,0 +1,88 @@
+@{
+    ViewData["title"] = "Admin: Manage Classwise Subjects";
+}
+
+<h1 class="mb-3">Manage Classwise Subjects</h1>
+<span id="notification"></span>
+<div id="hireteacherGrid"></div>
+
+@section Scripts {
+    <script>
+        $("#notification").kendoNotification({
+            position: {
+                top: 30
+            }
+        });
+
+        const hireteacherGrid = $("#hireteacherGrid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: `${apihost}/api/Admin/GetJobRequests`,
+                        dataType: "json",
+                        complete: function (data) {
+                            if (data.status === 200) {
+                                $("#notification").getKendoNotification().show("Classwise subjects fetched successfully", "info");
+                            } else {
+                                $("#notification").getKendoNotification().show(data.statusText, "error");
+                            }
+                        },
+                    },
+
+
+                    parameterMap: function (data, type) {
+                        if (type === "create") {
+                            const formData = new FormData();
+                            formData.append("subjectId", data.subjectId.subjectId);
+                            formData.append("teacherId", data.teacherId.teacherId);
+                            formData.append("standard", data.standard);
+                            return formData;
+                        }
+
+                        if (type === "update") {
+                            const formData = new FormData();
+                            formData.append("subjectId", data.subjectId);
+                            formData.append("teacherId", data.teacherId);
+                            formData.append("standard", data.standard);
+                            formData.append("id", data.id)
+                            return formData;
+                        }
+
+                        if (type === "destroy") return data.id
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "userId",
+                        fields: {
+                            id: { editable: false, nullable: false }
+                        }
+                    }
+                },
+                pageSize: 10
+            },
+            columns: [
+                { field: "userId", title: "Candidate ID" },
+                { field: "image", title: "Image" },
+                { field: "name", title: "Name" },
+                { field: "email", title: "Email Address" },
+                { field: "mobileNumber", title: "Contact Number" },
+                {
+                    field: "birthDate", title: "Date of Birth", template: function (data) {
+                        const miliseconds = Date.parse(data.birthDate);
+                        const date = new Date(miliseconds);
+                        return date.toDateString();
+                    }
+                },
+                { field: "gender", title: "Gender" },
+                { field: "address", title: "Address" },
+                { command: ["Hire", "destroy"], title: "Action" }
+            ],
+
+            height: 500,
+            sortable: true,
+            filterable: true,
+            pageable: true
+        });
+    </script>
+}

@@ -53,11 +53,11 @@ public class StudentRepository : IStudentRepository
         return studentDetails;
     }
 
-    public List<Student.StudentDetails> GetStudentsListByStandard(int standard)
+    public List<Student.StudentDetails> GetStudentsListByStandard(string standard)
     {
         List<Student.StudentDetails> studentDetails = [];
         NpgsqlCommand getAdmissionRequestCommand = new("SELECT c_enrollment_number, c_image, c_name, c_standard, c_email, c_mobile_number, c_gender, c_birth_date, c_address, c_admission_date, c_studying FROM t_students inner join t_users ON t_students.c_user_id = t_users.c_user_id WHERE c_standard = @standard", connection);
-        getAdmissionRequestCommand.Parameters.AddWithValue("standard", standard.ToString());
+        getAdmissionRequestCommand.Parameters.AddWithValue("standard", standard);
         using NpgsqlDataReader reader = getAdmissionRequestCommand.ExecuteReader();
         while (reader.Read())
         {

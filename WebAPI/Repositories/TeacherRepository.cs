@@ -63,6 +63,18 @@ public class TeacherRepository : ITeacherRepository
         updateStudentCommand.ExecuteNonQuery();
     }
 
+    public List<TeacherwithStudent> GetTeacherswithStudents()
+    {
+        List<TeacherwithStudent> teacherswithStudents = [];
+        NpgsqlCommand getTeacherwithStudents = new("SELECT * FROM (SELECT CAST(c_standard as int) as c_id, c_image, c_name, c_standard, c_mobile_number, c_email, c_joining_date as c_date, null as c_parent_id, c_role FROM t_users tu INNER JOIN t_teachers tt ON tu.c_user_id = tt.c_user_id WHERE c_standard != 'null' UNION SELECT tu.c_user_id, c_image, c_name, c_standard, c_mobile_number, c_email, c_admission_date as c_date, c_standard as c_parent_id, c_role FROM t_users tu INNER JOIN t_students ts ON tu.c_user_id = ts.c_user_id) tmp ORDER BY c_standard, c_role", connection);
+        using NpgsqlDataReader reader = getTeacherwithStudents.ExecuteReader();
+        while (reader.Read())
+        {
+            teacherswithStudents.Add(new() { Id = reader.GetInt16(0), Image = reader.GetString(1), Name = reader.GetString(2), Standard = reader.GetString(3), MobileNumber = reader.GetString(4), EmailAddress = reader.GetString(5), JoiningDate = reader.GetDateTime(6), ParentId = reader.IsDBNull(7) ? null : reader.GetString(7) });
+        }
+        return teacherswithStudents;
+    }
+
     public void RejectCandidate(int userid)
     {
         NpgsqlCommand rejectCandidateCommand = new("DELETE FROM t_users WHERE c_user_id = @id", connection);

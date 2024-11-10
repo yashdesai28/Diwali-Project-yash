@@ -593,8 +593,7 @@ public class AdminController : ControllerBase
         }
     }
 
-    // Common rejection
-
+    // Common 
     [HttpDelete("RejectCandidate")]
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -612,6 +611,24 @@ public class AdminController : ControllerBase
             }
 
             return StatusCode(StatusCodes.Status400BadRequest, new { message = "Please provide an id." });
+        }
+        catch (Exception e)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new { message = e.Message });
+        }
+    }
+
+    [HttpGet("GetTeacherswithStudents")]
+    [Produces("application/json")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public IActionResult GetTeacherswithStudents()
+    {
+        try
+        {
+            List<TeacherwithStudent> teacherwithStudents = teacherRepository.GetTeacherswithStudents();
+            return StatusCode(StatusCodes.Status200OK, teacherwithStudents);
         }
         catch (Exception e)
         {

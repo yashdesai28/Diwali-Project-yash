@@ -20,6 +20,15 @@ public class Feedback
         public required string BatchYear { get; set; }
         public required DateTime FeedbackDate { get; set; }
     }
+    
+    public class GetStudentFeedback
+    {
+        public required string TeacherName { get; set; }
+        public required int Rating { get; set; }
+        public string? Comment { get; set; }
+        public required string BatchYear { get; set; }
+        public required DateTime FeedbackDate { get; set; }
+    }
 
     public class Post
     {
@@ -32,5 +41,11 @@ public class Feedback
         public string? Comment { get; set; }
         [Required(ErrorMessage = "Please enter batch year.")]
         public required string BatchYear { get; set; }
+    }
+    
+    public class Teacher
+    {
+        public int c_user_id { get; set; }
+        public string c_name { get; set; } // This will hold the teacher's name
     }
 }

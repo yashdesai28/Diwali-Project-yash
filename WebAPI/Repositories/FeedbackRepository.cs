@@ -52,16 +52,40 @@ public class FeedbackRepository : IFeedbackRepository
         return feedbacks;
     }
 
-    public List<Feedback.Get> GetFeedbacksByStudent(int studentid)
+    public List<Feedback.GetStudentFeedback> GetFeedbacksByStudent(int studentid)
     {
-        List<Feedback.Get> feedbacks = [];
-        NpgsqlCommand getFeedbacksCommand = new("SELECT * from t_feedbacks WHERE c_student_id = @studentid", connection);
+        List<Feedback.GetStudentFeedback> feedbacks = [];
+        // Change here for getting feedbacks
+        NpgsqlCommand getFeedbacksCommand = new("SELECT tu.c_name AS teacher_name,tfs.c_comment AS feedback_comment,tfs.c_rating AS feedback_rating,tfs.c_batch_year AS feedback_batch_year,tfs.c_feedback_date AS feedback_date FROM t_feedbacks AS tfs INNER JOIN t_users AS tu ON tfs.c_teacher_id = tu.c_user_id WHERE tfs.c_student_id = @studentid AND tu.c_role ILIKE 'Teacher';", connection);
         getFeedbacksCommand.Parameters.AddWithValue("studentid", studentid);
         using NpgsqlDataReader reader = getFeedbacksCommand.ExecuteReader();
         while (reader.Read())
         {
-            feedbacks.Add(new() { TeacherId = reader.GetInt16(1), Rating = reader.GetInt16(2), Comment = reader.IsDBNull(3) ? null : reader.GetString(3), BatchYear = reader.GetString(4), FeedbackDate = reader.GetDateTime(5) });
+            feedbacks.Add(new() { TeacherName = reader.GetString(0), Comment = reader.IsDBNull(1) ? null : reader.GetString(1), Rating = reader.GetInt16(2), BatchYear = reader.GetString(3), FeedbackDate = reader.GetDateTime(4) });
         }
         return feedbacks;
+    }
+    
+    public List<Feedback.Teacher> GetTeachers()
+    {
+        var teachers = new List<Feedback.Teacher>();
+
+        string query = "SELECT u.c_user_id, u.c_name FROM t_users u INNER JOIN t_teachers t ON u.c_user_id = t.c_user_id WHERE u.c_role = 'Teacher'";
+        using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
+        {
+            using (NpgsqlDataReader reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    teachers.Add(new Feedback.Teacher
+                    {
+                        c_user_id = int.Parse(reader["c_user_id"].ToString()),
+                        c_name = reader["c_name"].ToString()
+                    });
+                }
+            }
+        }
+
+        return teachers;
     }
 }

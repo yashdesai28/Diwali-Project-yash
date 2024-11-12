@@ -86,7 +86,7 @@ namespace WebAPI.Repositories
                                 EnrollmentNumber = reader1.GetInt32(8),
                                 AdmissionDate = reader1.GetDateTime(9),
                                 Standard = reader1.GetString(10),
-                                //Studying = reader1.GetBoolean(11),
+                                // Studying = reader1.GetBoolean(11),
                                 FeeStatus = reader1.IsDBNull(11) ? "No Payment Info" : reader1.GetString(11)
 
                             };

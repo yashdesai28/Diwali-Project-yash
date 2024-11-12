@@ -1,0 +1,138 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Include jQuery, Kendo UI, and jsPDF libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2024.3.917/js/kendo.all.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2024.3.917/styles/kendo.default-v2.min.css" />
+</head>
+
+<body>
+    <div id="feesGrid"></div>
+
+    <!-- ActionSheet for payment action (hidden by default) -->
+    <div id="payActionSheet"></div>
+
+    <script>
+        const userId = 10;
+
+        $(document).ready(function () {
+            // Initialize the Kendo Grid
+            $("#feesGrid").kendoGrid({
+                dataSource: {
+                    type: "json",
+                    transport: {
+                        read: {
+                            url: `http://localhost:5064/api/Student/GetFeesDetails/${userId}`,  // Replace with the actual endpoint URL
+                            dataType: "json",
+                            type: "GET",
+                        }
+                    },
+                    schema: {
+                        model: {
+                            fields: {
+                                c_paymentid: { type: "number" },
+                                c_enrollment_number: { type: "number" },
+                                c_currentstandard: { type: "string" },
+                                c_amount: { type: "number" },
+                                c_status: { type: "string" },
+                                c_paymentdate: { type: "date" }
+                            }
+                        }
+                    },
+                    pageSize: 20
+                },
+                pageable: true,
+                sortable: true,
+                filterable: true,
+                columns: [
+                    { field: "c_paymentid", title: "Payment ID" },
+                    { field: "c_enrollment_number", title: "Enrollment Number" },
+                    { field: "c_currentstandard", title: "Current Standard" },
+                    { field: "c_amount", title: "Amount", format: "{0:n}" },
+                    { field: "c_status", title: "Status" },
+                    { field: "c_paymentdate", title: "Payment Date", format: "{0:MM/dd/yyyy}" },
+                    {
+                        title: "Action",
+                        command: [{
+                            name: "pay",
+                            text: "Pay Fee",
+                            visible: function (e) {
+                                // Show the "Pay Fee" button if status is "Pending"
+                                return e.c_status === "Pending";
+                            },
+                            click: function (e) {
+                                // Get the data item for the row clicked
+                                console.log("Clicked");
+                                const dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+                                console.log(dataItem);
+
+                                // Initialize the Kendo UI ActionSheet for payment options if not initialized yet
+                                if (!$("#payActionSheet").data("kendoActionSheet")) {
+                                    $("#payActionSheet").kendoActionSheet({
+                                        dataSource: [
+                                            { text: "Pay Now" },
+                                            { text: "Cancel" }
+                                        ],
+                                        select: function (e) {
+                                            const action = e.item.innerText;
+                                            if (action === "Pay Now") {
+                                                // Handle payment logic here
+                                                alert("Payment is being processed for Payment ID: " + dataItem.c_paymentid);
+                                            }
+                                            // Close the ActionSheet after selection
+                                            payActionSheet.data("kendoActionSheet").close();
+                                        }
+                                    });
+                                }
+
+                                // Open the ActionSheet
+                                const payActionSheet = $("#payActionSheet").data("kendoActionSheet");
+                                payActionSheet.open();
+                            }
+                        },
+                        {
+                            name: "download",
+                            text: "Download Receipt",
+                            visible: function (e) {
+                                // Show the "Download Receipt" button if status is "Completed"
+                                return e.c_status === "Completed";
+                            },
+                            click: function (e) {
+                                // Get the data item for the row clicked
+                                const dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+                                // Generate PDF receipt using jsPDF
+                                const { jsPDF } = window.jspdf;
+                                const doc = new jsPDF();
+
+                                // Add content to the PDF
+                                doc.setFontSize(16);
+                                doc.text("Payment Receipt", 20, 20);
+
+                                // Payment details
+                                doc.setFontSize(12);
+                                doc.text(`Payment ID: ${dataItem.c_paymentid}`, 20, 40);
+                                doc.text(`Enrollment Number: ${dataItem.c_enrollment_number}`, 20, 50);
+                                doc.text(`Standard: ${dataItem.c_currentstandard}`, 20, 60);
+                                doc.text(`Amount: ₹${dataItem.c_amount.toFixed(2)}`, 20, 70); // Assuming it's in INR
+                                doc.text(`Payment Status: ${dataItem.c_status}`, 20, 80);
+                                doc.text(`Payment Date: ${new Date(dataItem.c_paymentdate).toLocaleDateString()}`, 20, 90);
+
+                                // Save the PDF file
+                                doc.save(`Payment_Receipt_${dataItem.c_paymentid}.pdf`);
+                            }
+                        }]
+
+                    }
+                ]
+            });
+        });
+    </script>
+</body>
+
+</html>

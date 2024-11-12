@@ -48,6 +48,69 @@ public class FeesRepository : IFeesRepository
         return feeStructure;
     }
 
+    public List<FeesInfo.FeesDetailsForStudent> GetFeesDetailsStudent(int userId)
+    {
+        List<FeesInfo.FeesDetailsForStudent> feesDetails = new();
+
+        // First query: Fetch all payment records for the user
+        NpgsqlCommand getPaymentDetailsCommand = new(
+            "SELECT tp.c_paymentid, ts.c_enrollment_number, " +
+            "       CASE WHEN tp.c_status = 'Pending' THEN ts.c_standard ELSE tp.c_currentstandard END AS c_currentstandard, " +
+            "       tfs.c_amount, tp.c_status, tp.c_paymentdate " +
+            "FROM t_payments tp " +
+            "INNER JOIN t_students ts ON tp.c_user_id = ts.c_user_id " +
+            "INNER JOIN t_fees_structure tfs ON tfs.c_id = tp.c_id " +
+            "WHERE tp.c_user_id = @userId", connection);
+        getPaymentDetailsCommand.Parameters.AddWithValue("@userId", userId);
+
+        using (NpgsqlDataReader reader = getPaymentDetailsCommand.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                feesDetails.Add(new FeesInfo.FeesDetailsForStudent
+                {
+                    c_paymentid = reader.IsDBNull(0) ? (int?)null : reader.GetInt32(0),
+                    c_enrollment_number = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
+                    c_currentstandard = reader.IsDBNull(2) ? string.Empty : reader.GetString(2), // Fetching c_currentstandard
+                    c_amount = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
+                    c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4), // Default Pending if null
+                    c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5)
+                });
+            }
+        }
+
+        // Second query: Fetch fee details based on the student's standard and match payment status
+        NpgsqlCommand getStandardFeeDetailsCommand = new(
+            "SELECT tp.c_paymentid, ts.c_enrollment_number, " +
+            "       CASE WHEN tp.c_currentstandard IS NULL OR tp.c_currentstandard != ts.c_standard THEN ts.c_standard ELSE tp.c_currentstandard END AS c_currentstandard, " +
+            "       tfs.c_amount, COALESCE(tp.c_status, 'Pending') AS c_status, tp.c_paymentdate " +
+            "FROM t_students ts " +
+            "LEFT JOIN t_fees_structure tfs ON ts.c_standard = tfs.c_standard " +
+            "LEFT JOIN t_payments tp ON tp.c_user_id = ts.c_user_id AND tp.c_id = tfs.c_id " +
+            "WHERE ts.c_user_id = @userId " +
+            "AND EXTRACT('YEAR' FROM ts.c_admission_date) = CAST(tfs.c_batch_year AS int) " +
+            "AND (tp.c_status = 'Pending' OR tp.c_status IS NULL);", connection);
+        getStandardFeeDetailsCommand.Parameters.AddWithValue("@userId", userId);
+
+        using (NpgsqlDataReader reader = getStandardFeeDetailsCommand.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                feesDetails.Add(new FeesInfo.FeesDetailsForStudent
+                {
+                    c_paymentid = reader.IsDBNull(0) ? (int?)null : reader.GetInt32(0),
+                    c_enrollment_number = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
+                    c_currentstandard = reader.IsDBNull(2) ? string.Empty : reader.GetString(2), // Fetching c_currentstandard
+                    c_amount = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
+                    c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4),
+                    c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5)
+                });
+            }
+        }
+
+        return feesDetails;
+    }
+
     public FeesInfo.Get GetFeeStructure(string standard, string batchYear)
     {
         NpgsqlCommand getFeeStructureCommand = new("SELECT * from t_fees_structure WHERE c_standard = @standard, c_batch_year = @batchyear", connection);

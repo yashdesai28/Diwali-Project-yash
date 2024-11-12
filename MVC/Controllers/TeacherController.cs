@@ -28,10 +28,12 @@ namespace MVC.Controllers
             return View("TeacherTimetable");
         }
 
-        public IActionResult TeacherDashboard(){
-            
+        public IActionResult TeacherDashboard()
+        {
+
             return View("TeacherDashboard");
         }
+        public IActionResult UpdateProfile() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

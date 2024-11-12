@@ -54,7 +54,49 @@
         .k-card-header {
             border-color: #d5d5d5;
             color: #ffffff;
-            background-color: #124732;
+            background-color: #5798be;
+        }
+
+
+
+        .k-window-titlebar {
+            background-color: #5798be;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .k-picker{
+              background-color: #5798be;
+        }
+
+
+
+
+        .k-dialog-buttongroup {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+
+
+        .k-button {
+            width: 48%;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .k-button-primary {
+            background-color: #5798be;
+            color: #fff;
+        }
+
+        .k-button-secondary {
+            background-color: #f1f1f1;
+            color: #124732;
         }
     </style>
 </head>
@@ -71,7 +113,7 @@
     <div id="editModal">
         <div id="studentName"></div>
         <select id="standardDropdownModal"></select>
-        <button id="saveButtonModal" class="k-button k-button-md k-rounded-md">Save</button>
+        <button id="saveButtonModal" class="k-button k-button-md k-rounded-md  k-button-primary">Save</button>
         <button id="cancelButtonModal" class="k-button k-button-md k-rounded-md">Cancel</button>
     </div>
 
@@ -79,8 +121,9 @@
     <!-- Add HTML structure for delete confirmation modal -->
     <div id="deleteModal" style="display: none;">
         <p>Are you sure you want to delete this student?</p>
-        <button id="confirmDeleteButton" class="k-button k-button-md k-rounded-md k-primary">Yes</button>
-        <button id="cancelDeleteButton" class="k-button k-button-md k-rounded-md">No</button>
+        <button id="confirmDeleteButton"
+            class="k-button k-button-md k-rounded-md k-primary k-button-primary">Yes</button>
+        <button id="cancelDeleteButton" class="k-button k-button-md k-rounded-md k-button-secondary">No</button>
     </div>
 
 
@@ -262,7 +305,6 @@
                     }
                 });
             }
-
 
             function deleteUser(userId) {
                 console.log(userId)

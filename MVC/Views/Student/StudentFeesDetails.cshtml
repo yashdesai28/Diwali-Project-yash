@@ -9,6 +9,39 @@
     <script src="https://kendo.cdn.telerik.com/2024.3.917/js/kendo.all.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2024.3.917/styles/kendo.default-v2.min.css" />
+
+    <style>
+        /* Ensure the body and main container have proper dimensions */
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        #feesGrid {
+            width: 100%;
+            height: 80vh;
+            /* Set height to allow grid to be visible */
+            margin: 10px 0;
+        }
+
+        .k-actionsheet-container {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .k-actionsheet-container>.k-overlay {
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+
+        #openActionSheetBttn {
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
 </head>
 
 <body>
@@ -21,6 +54,48 @@
         const userId = 10;
 
         $(document).ready(function () {
+            // Initialize Kendo ActionSheet for payment options
+            var actionsheet = $('#payActionSheet').kendoActionSheet({
+                title: 'Select Payment Option',
+                items: [
+                    {
+                        text: 'Pay by Card',
+                        iconClass: 'k-i-pencil',
+                        click: function (e) {
+                            const dataItem = this.dataItem;
+                            alert("Processing payment by Card for Payment ID: " + dataItem.c_paymentid);
+                            actionsheet.close();
+                        }
+                    },
+                    {
+                        text: 'Pay by UPI',
+                        iconClass: 'k-i-heart',
+                        click: function (e) {
+                            const dataItem = this.dataItem;
+                            alert("Processing payment by UPI for Payment ID: " + dataItem.c_paymentid);
+                            actionsheet.close();
+                        }
+                    },
+                    {
+                        text: 'Pay by Netbanking',
+                        iconClass: 'k-i-upload',
+                        click: function (e) {
+                            const dataItem = this.dataItem;
+                            alert("Processing payment by Netbanking for Payment ID: " + dataItem.c_paymentid);
+                            actionsheet.close();
+                        }
+                    },
+                    {
+                        text: 'Cancel',
+                        iconClass: 'k-i-cancel',
+                        group: 'bottom',
+                        click: function (e) {
+                            actionsheet.close();
+                        }
+                    }
+                ]
+            }).data("kendoActionSheet");
+
             // Initialize the Kendo Grid
             $("#feesGrid").kendoGrid({
                 dataSource: {
@@ -66,33 +141,11 @@
                                 return e.c_status === "Pending";
                             },
                             click: function (e) {
-                                // Get the data item for the row clicked
-                                console.log("Clicked");
                                 const dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-                                console.log(dataItem);
 
-                                // Initialize the Kendo UI ActionSheet for payment options if not initialized yet
-                                if (!$("#payActionSheet").data("kendoActionSheet")) {
-                                    $("#payActionSheet").kendoActionSheet({
-                                        dataSource: [
-                                            { text: "Pay Now" },
-                                            { text: "Cancel" }
-                                        ],
-                                        select: function (e) {
-                                            const action = e.item.innerText;
-                                            if (action === "Pay Now") {
-                                                // Handle payment logic here
-                                                alert("Payment is being processed for Payment ID: " + dataItem.c_paymentid);
-                                            }
-                                            // Close the ActionSheet after selection
-                                            payActionSheet.data("kendoActionSheet").close();
-                                        }
-                                    });
-                                }
-
-                                // Open the ActionSheet
-                                const payActionSheet = $("#payActionSheet").data("kendoActionSheet");
-                                payActionSheet.open();
+                                // Open the ActionSheet and pass the dataItem
+                                actionsheet.dataItem = dataItem;  // Save dataItem to the ActionSheet instance
+                                actionsheet.open();
                             }
                         },
                         {
@@ -103,10 +156,7 @@
                                 return e.c_status === "Completed";
                             },
                             click: function (e) {
-                                // Get the data item for the row clicked
                                 const dataItem = this.dataItem($(e.currentTarget).closest("tr"));
-
-                                // Generate PDF receipt using jsPDF
                                 const { jsPDF } = window.jspdf;
                                 const doc = new jsPDF();
 
@@ -114,12 +164,11 @@
                                 doc.setFontSize(16);
                                 doc.text("Payment Receipt", 20, 20);
 
-                                // Payment details
                                 doc.setFontSize(12);
                                 doc.text(`Payment ID: ${dataItem.c_paymentid}`, 20, 40);
                                 doc.text(`Enrollment Number: ${dataItem.c_enrollment_number}`, 20, 50);
                                 doc.text(`Standard: ${dataItem.c_currentstandard}`, 20, 60);
-                                doc.text(`Amount: ₹${dataItem.c_amount.toFixed(2)}`, 20, 70); // Assuming it's in INR
+                                doc.text(`Amount: ₹${dataItem.c_amount.toFixed(2)}`, 20, 70);
                                 doc.text(`Payment Status: ${dataItem.c_status}`, 20, 80);
                                 doc.text(`Payment Date: ${new Date(dataItem.c_paymentdate).toLocaleDateString()}`, 20, 90);
 
@@ -127,7 +176,6 @@
                                 doc.save(`Payment_Receipt_${dataItem.c_paymentid}.pdf`);
                             }
                         }]
-
                     }
                 ]
             });

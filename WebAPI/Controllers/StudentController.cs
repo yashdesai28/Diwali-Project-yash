@@ -14,12 +14,14 @@ namespace WebAPI.Controllers
         private readonly SchoolInfoRepository _schoolInfoRepository;
         private readonly StudentRepository _studentRepository;
         private readonly FeesRepository _feesRepository;
+        private readonly FeedbackRepository _feedbackRepository;
 
         public StudentController(IConfiguration configuration)
         {
             _schoolInfoRepository = new SchoolInfoRepository(configuration);
             _studentRepository = new StudentRepository(configuration);
             _feesRepository = new FeesRepository(configuration);
+            _feedbackRepository = new FeedbackRepository(configuration);
         }
 
 
@@ -104,6 +106,30 @@ namespace WebAPI.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+        }
+        
+        [HttpPost]
+        [Route("CreateStudentFeedback")]
+        public IActionResult CreateStudentFeedback(Feedback.Post feedbackByStudent)
+        {
+            _feedbackRepository.AddFeedback(feedbackByStudent);
+            return Ok("Feedback submitted successfully!");
+        }
+
+        [HttpGet]
+        [Route("GetTeacher")]
+        public IActionResult GetTeacher()
+        {
+            var teachers = _feedbackRepository.GetTeachers();
+            return Ok(teachers);
+        }
+
+        [HttpPost]
+        [Route("GetStdFeedback")]
+        public IActionResult GetStdFeedback(int id)
+        {
+            var teachers = _feedbackRepository.GetFeedbacksByStudent(id);
+            return Ok(teachers);
         }
     }
 }

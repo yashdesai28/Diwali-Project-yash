@@ -29,4 +29,14 @@ public class FeesInfo
         [Range(1, 12, ErrorMessage = "Standard must be between 1 to 12")]
         public required string Standard { get; set; }
     }
+    
+    public class FeesDetailsForStudent{
+        public int? c_paymentid{get; set;}
+        public int c_enrollment_number { get; set;}
+        public string c_currentstandard { get; set; }
+        public int c_amount { get; set; }
+        public string c_status { get; set; }
+        public DateTime? c_paymentdate { get; set; }
+        
+    }
 }

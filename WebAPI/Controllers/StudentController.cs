@@ -13,11 +13,13 @@ namespace WebAPI.Controllers
     {
         private readonly SchoolInfoRepository _schoolInfoRepository;
         private readonly StudentRepository _studentRepository;
+        private readonly FeesRepository _feesRepository;
 
         public StudentController(IConfiguration configuration)
         {
             _schoolInfoRepository = new SchoolInfoRepository(configuration);
             _studentRepository = new StudentRepository(configuration);
+            _feesRepository = new FeesRepository(configuration);
         }
 
 
@@ -66,6 +68,28 @@ namespace WebAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        [HttpGet("GetFeesDetails/{userId}")]
+        [Produces("application/json")]
+        public ActionResult<FeesInfo.FeesDetailsForStudent> GetFeesDetails(int userId)
+        {
+            try
+            {
+                var studentDetails = _feesRepository.GetFeesDetailsStudent(userId);
+
+                if (studentDetails == null || !studentDetails.Any())
+                {
+                    return NotFound("Student Fees Details not found.");
+                }
+
+                return Ok(studentDetails);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
 
         [HttpGet("GetSchoolInfo")]

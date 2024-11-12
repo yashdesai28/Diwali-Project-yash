@@ -11,8 +11,8 @@ namespace MVC.Controllers
     //[Route("[controller]")]
     public class StudentController : Controller
     {
-       public IActionResult SchoolInfo() => View();
-       public IActionResult UpdateProfile() => View();
+        public IActionResult SchoolInfo() => View();
+        public IActionResult UpdateProfile() => View();
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

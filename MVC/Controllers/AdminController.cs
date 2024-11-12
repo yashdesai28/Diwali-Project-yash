@@ -11,4 +11,6 @@ public class AdminController : Controller
     public IActionResult ViewFeedback() => View();
     public IActionResult ManageSubjects() => View();
     public IActionResult ManageClasswiseSubjects() => View();
+    public IActionResult Timetable() => View();
+
 }

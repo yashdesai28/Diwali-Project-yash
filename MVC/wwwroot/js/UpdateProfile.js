@@ -1,7 +1,7 @@
 
 
 $(document).ready(function () {
-    let userId = 1;  // Replace this with dynamic logic to get the userId
+    let userId = 142;  // Replace this with dynamic logic to get the userId
 
     // Initialize Kendo DatePicker for birth date
     $("#datepicker").kendoDatePicker({

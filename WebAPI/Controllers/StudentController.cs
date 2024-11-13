@@ -92,6 +92,26 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpPost("PayFees")]
+        [Consumes("application/json")]
+        [Produces("application/json")]
+        public IActionResult PayFees([FromBody] FeesInfo.PaymentRequest paymentRequest)
+        {
+            if (paymentRequest == null || string.IsNullOrEmpty(paymentRequest.Status) || string.IsNullOrEmpty(paymentRequest.CurrentStandard))
+            {
+                return BadRequest("Status and CurrentStandard are required.");
+            }
+
+            bool feesPaid = _feesRepository.PayFees(paymentRequest);
+            if (feesPaid)
+            {
+                return Ok(feesPaid);
+            }
+            else
+            {
+                return BadRequest("Error in paying fees");
+            }
+        }
 
 
         [HttpGet("GetSchoolInfo")]
@@ -107,7 +127,7 @@ namespace WebAPI.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
+
         [HttpPost]
         [Route("CreateStudentFeedback")]
         public IActionResult CreateStudentFeedback(Feedback.Post feedbackByStudent)
@@ -124,6 +144,7 @@ namespace WebAPI.Controllers
             return Ok(teachers);
         }
 
+
         [HttpPost]
         [Route("GetStdFeedback")]
         public IActionResult GetStdFeedback(int id)
@@ -131,5 +152,7 @@ namespace WebAPI.Controllers
             var teachers = _feedbackRepository.GetFeedbacksByStudent(id);
             return Ok(teachers);
         }
+
+
     }
 }

@@ -56,7 +56,7 @@ public class FeedbackRepository : IFeedbackRepository
     {
         List<Feedback.GetStudentFeedback> feedbacks = [];
         // Change here for getting feedbacks
-        NpgsqlCommand getFeedbacksCommand = new("SELECT tu.c_name AS teacher_name,tfs.c_comment AS feedback_comment,tfs.c_rating AS feedback_rating,tfs.c_batch_year AS feedback_batch_year,tfs.c_feedback_date AS feedback_date FROM t_feedbacks AS tfs INNER JOIN t_users AS tu ON tfs.c_teacher_id = tu.c_user_id WHERE tfs.c_student_id = @studentid AND tu.c_role ILIKE 'Teacher';", connection);
+        NpgsqlCommand getFeedbacksCommand = new("SELECT tu.c_name AS teacher_name,tfs.c_comment AS feedback_comment,tfs.c_rating AS feedback_rating,tfs.c_batch_year AS feedback_batch_year,tfs.c_feedback_date AS feedback_date FROM t_feedbacks AS tfs INNER JOIN t_teachers AS tt ON tfs.c_teacher_id = tt.c_teacher_id INNER JOIN t_users AS tu ON tt.c_user_id = tu.c_user_id WHERE tfs.c_student_id = @studentid AND tu.c_role ILIKE 'Teacher';", connection);
         getFeedbacksCommand.Parameters.AddWithValue("studentid", studentid);
         using NpgsqlDataReader reader = getFeedbacksCommand.ExecuteReader();
         while (reader.Read())
@@ -70,7 +70,7 @@ public class FeedbackRepository : IFeedbackRepository
     {
         var teachers = new List<Feedback.Teacher>();
 
-        string query = "SELECT u.c_user_id, u.c_name FROM t_users u INNER JOIN t_teachers t ON u.c_user_id = t.c_user_id WHERE u.c_role = 'Teacher'";
+        string query = "SELECT t.c_teacher_id, u.c_name FROM t_users u INNER JOIN t_teachers t ON u.c_user_id = t.c_user_id WHERE u.c_role = 'Teacher'";
         using (NpgsqlCommand cmd = new NpgsqlCommand(query, connection))
         {
             using (NpgsqlDataReader reader = cmd.ExecuteReader())
@@ -79,7 +79,7 @@ public class FeedbackRepository : IFeedbackRepository
                 {
                     teachers.Add(new Feedback.Teacher
                     {
-                        c_user_id = int.Parse(reader["c_user_id"].ToString()),
+                        c_user_id = int.Parse(reader["c_teacher_id"].ToString()),
                         c_name = reader["c_name"].ToString()
                     });
                 }

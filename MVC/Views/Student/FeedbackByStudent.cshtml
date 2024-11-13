@@ -92,7 +92,7 @@
                     var today = new Date();
                     var formattedDate = today.getFullYear().toString();
 
-                    
+
                     var studentID = "@ViewBag.UserID";
                     var teacherID = $("#teacherDropdown").val();
                     var rating = slider.value();
@@ -109,10 +109,7 @@
                         return;
                     }
 
-                    if (!comment || comment.trim().length > 50) {
-                        alert("Comment should be at least 50 characters.");
-                        return;
-                    }
+
 
                     var feedback = {
                         studentID: "@ViewBag.UserID",

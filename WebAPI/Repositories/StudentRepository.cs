@@ -112,20 +112,19 @@ public class StudentRepository : IStudentRepository
             if (updateDetails.Image != null)
             {
 
-                string imagesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "SchoolData");
+                string imagesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserData");
                 if (!Directory.Exists(imagesDirectory))
                 {
                     Directory.CreateDirectory(imagesDirectory);
                 }
 
-
-                string fileName = $"user_{updateDetails.UserId}_{Guid.NewGuid()}{Path.GetExtension(updateDetails.Image.FileName)}";
-                imagePath = Path.Combine("images", fileName);
+                string fileName = $"{updateDetails.UserId}{Path.GetExtension(updateDetails.Image.FileName)}";
+                imagePath = Path.Combine("UserData", fileName);
                 string fullImagePath = Path.Combine(imagesDirectory, fileName);
-
 
                 using var stream = new FileStream(fullImagePath, FileMode.Create);
                 updateDetails.Image.CopyTo(stream);
+                
             }
 
 

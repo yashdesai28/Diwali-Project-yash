@@ -34,6 +34,28 @@ public class FeesRepository : IFeesRepository
         }
         return feeStructure;
     }
+       
+       
+    public bool PayFees(FeesInfo.PaymentRequest paymentRequest)
+    {
+            // Insert a new record into t_payments table
+            const string insertPaymentQuery = @"
+            INSERT INTO t_payments (c_user_id, c_id, c_paymentdate, c_status, c_currentstandard)
+            VALUES (@UserId, @CId, @PaymentDate, @Status, @CurrentStandard)";
+
+            using (var insertCmd = new NpgsqlCommand(insertPaymentQuery, connection))
+            {
+                insertCmd.Parameters.AddWithValue("@UserId", paymentRequest.UserId);
+                insertCmd.Parameters.AddWithValue("@CId", paymentRequest.FeeStructureId);
+                insertCmd.Parameters.AddWithValue("@PaymentDate",paymentRequest.PaymentDate );
+                insertCmd.Parameters.AddWithValue("@Status", paymentRequest.Status);
+                insertCmd.Parameters.AddWithValue("@CurrentStandard", paymentRequest.CurrentStandard);
+
+                int rowsAffected = insertCmd.ExecuteNonQuery();
+                return rowsAffected > 0; // Return true if the insertion was successful
+            }
+    }
+
 
     public List<FeesInfo.Get> GetFeeStructure(string batchYear)
     {
@@ -56,7 +78,7 @@ public class FeesRepository : IFeesRepository
         NpgsqlCommand getPaymentDetailsCommand = new(
             "SELECT tp.c_paymentid, ts.c_enrollment_number, " +
             "       CASE WHEN tp.c_status = 'Pending' THEN ts.c_standard ELSE tp.c_currentstandard END AS c_currentstandard, " +
-            "       tfs.c_amount, tp.c_status, tp.c_paymentdate " +
+            "       tfs.c_amount, tp.c_status, tp.c_paymentdate, tfs.c_id " + // Added tfs.c_id
             "FROM t_payments tp " +
             "INNER JOIN t_students ts ON tp.c_user_id = ts.c_user_id " +
             "INNER JOIN t_fees_structure tfs ON tfs.c_id = tp.c_id " +
@@ -71,10 +93,11 @@ public class FeesRepository : IFeesRepository
                 {
                     c_paymentid = reader.IsDBNull(0) ? (int?)null : reader.GetInt32(0),
                     c_enrollment_number = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
-                    c_currentstandard = reader.IsDBNull(2) ? string.Empty : reader.GetString(2), // Fetching c_currentstandard
+                    c_currentstandard = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
                     c_amount = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
-                    c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4), // Default Pending if null
-                    c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5)
+                    c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4),
+                    c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5),
+                    c_id = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6) // Added c_id
                 });
             }
         }
@@ -83,7 +106,7 @@ public class FeesRepository : IFeesRepository
         NpgsqlCommand getStandardFeeDetailsCommand = new(
             "SELECT tp.c_paymentid, ts.c_enrollment_number, " +
             "       CASE WHEN tp.c_currentstandard IS NULL OR tp.c_currentstandard != ts.c_standard THEN ts.c_standard ELSE tp.c_currentstandard END AS c_currentstandard, " +
-            "       tfs.c_amount, COALESCE(tp.c_status, 'Pending') AS c_status, tp.c_paymentdate " +
+            "       tfs.c_amount, COALESCE(tp.c_status, 'Pending') AS c_status, tp.c_paymentdate, tfs.c_id " + // Added tfs.c_id
             "FROM t_students ts " +
             "LEFT JOIN t_fees_structure tfs ON ts.c_standard = tfs.c_standard " +
             "LEFT JOIN t_payments tp ON tp.c_user_id = ts.c_user_id AND tp.c_id = tfs.c_id " +
@@ -100,10 +123,11 @@ public class FeesRepository : IFeesRepository
                 {
                     c_paymentid = reader.IsDBNull(0) ? (int?)null : reader.GetInt32(0),
                     c_enrollment_number = reader.IsDBNull(1) ? 0 : reader.GetInt32(1),
-                    c_currentstandard = reader.IsDBNull(2) ? string.Empty : reader.GetString(2), // Fetching c_currentstandard
+                    c_currentstandard = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
                     c_amount = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
                     c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4),
-                    c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5)
+                    c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5),
+                    c_id = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6) // Added c_id
                 });
             }
         }
@@ -146,4 +170,5 @@ public class FeesRepository : IFeesRepository
         addFeeStructureCommand.Parameters.AddWithValue("id", feesInfo.FeesID);
         addFeeStructureCommand.ExecuteNonQuery();
     }
+
 }

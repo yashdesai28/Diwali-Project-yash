@@ -45,7 +45,7 @@ public class Student
         public DateTime BirthDate { get; set; }
         public required string Address { get; set; }
         public DateTime AdmissionDate { get; set; }
-        // public bool Studying { get; set; }
+        
         public string FeeStatus { get; set; }
         
     }

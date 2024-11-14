@@ -38,7 +38,6 @@ public class FeesRepository : IFeesRepository
        
     public bool PayFees(FeesInfo.PaymentRequest paymentRequest)
     {
-            // Insert a new record into t_payments table
             const string insertPaymentQuery = @"
             INSERT INTO t_payments (c_user_id, c_id, c_paymentdate, c_status, c_currentstandard)
             VALUES (@UserId, @CId, @PaymentDate, @Status, @CurrentStandard)";
@@ -52,7 +51,7 @@ public class FeesRepository : IFeesRepository
                 insertCmd.Parameters.AddWithValue("@CurrentStandard", paymentRequest.CurrentStandard);
 
                 int rowsAffected = insertCmd.ExecuteNonQuery();
-                return rowsAffected > 0; // Return true if the insertion was successful
+                return rowsAffected > 0;
             }
     }
 
@@ -74,11 +73,11 @@ public class FeesRepository : IFeesRepository
     {
         List<FeesInfo.FeesDetailsForStudent> feesDetails = new();
 
-        // First query: Fetch all payment records for the user
+        
         NpgsqlCommand getPaymentDetailsCommand = new(
             "SELECT tp.c_paymentid, ts.c_enrollment_number, " +
             "       CASE WHEN tp.c_status = 'Pending' THEN ts.c_standard ELSE tp.c_currentstandard END AS c_currentstandard, " +
-            "       tfs.c_amount, tp.c_status, tp.c_paymentdate, tfs.c_id " + // Added tfs.c_id
+            "       tfs.c_amount, tp.c_status, tp.c_paymentdate, tfs.c_id " + 
             "FROM t_payments tp " +
             "INNER JOIN t_students ts ON tp.c_user_id = ts.c_user_id " +
             "INNER JOIN t_fees_structure tfs ON tfs.c_id = tp.c_id " +
@@ -97,16 +96,15 @@ public class FeesRepository : IFeesRepository
                     c_amount = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
                     c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4),
                     c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5),
-                    c_id = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6) // Added c_id
+                    c_id = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6) 
                 });
             }
         }
 
-        // Second query: Fetch fee details based on the student's standard and match payment status
         NpgsqlCommand getStandardFeeDetailsCommand = new(
             "SELECT tp.c_paymentid, ts.c_enrollment_number, " +
             "       CASE WHEN tp.c_currentstandard IS NULL OR tp.c_currentstandard != ts.c_standard THEN ts.c_standard ELSE tp.c_currentstandard END AS c_currentstandard, " +
-            "       tfs.c_amount, COALESCE(tp.c_status, 'Pending') AS c_status, tp.c_paymentdate, tfs.c_id " + // Added tfs.c_id
+            "       tfs.c_amount, COALESCE(tp.c_status, 'Pending') AS c_status, tp.c_paymentdate, tfs.c_id " +
             "FROM t_students ts " +
             "LEFT JOIN t_fees_structure tfs ON ts.c_standard = tfs.c_standard " +
             "LEFT JOIN t_payments tp ON tp.c_user_id = ts.c_user_id AND tp.c_id = tfs.c_id " +
@@ -127,7 +125,7 @@ public class FeesRepository : IFeesRepository
                     c_amount = reader.IsDBNull(3) ? 0 : reader.GetInt32(3),
                     c_status = reader.IsDBNull(4) ? "Pending" : reader.GetString(4),
                     c_paymentdate = reader.IsDBNull(5) ? (DateTime?)null : reader.GetDateTime(5),
-                    c_id = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6) // Added c_id
+                    c_id = reader.IsDBNull(6) ? (int?)null : reader.GetInt32(6)
                 });
             }
         }

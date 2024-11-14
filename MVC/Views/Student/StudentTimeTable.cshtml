@@ -28,11 +28,11 @@
                     data = responseData;
                     console.log(data);
 
-                    // Initialize the DropDownList with data fetched from the API
+                    
 
                     const teacherAssignments = {};
 
-                    // Prepare teacher assignments once timetables data is available
+                   
                     data.timetables.forEach(({ c_standard, c_subject_name, c_name }) => {
                         const standardKey = `Standard ${c_standard}`;
                         if (!teacherAssignments[standardKey]) {
@@ -41,7 +41,7 @@
                         teacherAssignments[standardKey][c_subject_name] = c_name;
                     });
 
-                    // Initialize the scheduler with the loaded data
+                    
                     const startDate = new Date("2024-01-01");
 
                     const generateTimeTable = (standard) => {
@@ -154,7 +154,7 @@
                         }
                     });
 
-                    // Initial Load TimeTable Based On Student STandard Retrived Based on LoginID
+                    
                     loadSchedulerData("Standard 1");
                 },
                 error: function () {

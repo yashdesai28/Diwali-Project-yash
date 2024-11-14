@@ -111,7 +111,6 @@ public class StudentRepository : IStudentRepository
 
             if (updateDetails.Image != null)
             {
-
                 string imagesDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "UserData");
                 if (!Directory.Exists(imagesDirectory))
                 {
@@ -129,17 +128,17 @@ public class StudentRepository : IStudentRepository
 
 
             var query = @"
-            UPDATE t_users 
-            SET 
-                c_name = @Name,
-                c_email = @Email,
-                c_mobile_number = @MobileNumber,
-                c_gender = @Gender,
-                c_birth_date = @BirthDate,
-                c_address = @Address,
-                c_image = @ImagePath -- store the image path
-            WHERE 
-                c_user_id = @UserId";
+        UPDATE t_users 
+        SET 
+            c_name = @Name,
+            c_email = @Email,
+            c_mobile_number = @MobileNumber,
+            c_gender = @Gender,
+            c_birth_date = @BirthDate,
+            c_address = @Address,
+            c_image = COALESCE(@ImagePath, c_image)
+        WHERE 
+            c_user_id = @UserId";
 
             using var command = new NpgsqlCommand(query, connection);
             command.Parameters.AddWithValue("UserId", updateDetails.UserId);

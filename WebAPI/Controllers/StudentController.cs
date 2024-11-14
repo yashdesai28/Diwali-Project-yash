@@ -55,7 +55,6 @@ namespace WebAPI.Controllers
         {
             try
             {
-                // Corrected the reference to the correct repository and used FirstOrDefault correctly
                 var studentProfile = _studentRepository.GetUpdateProfileListById(userId).FirstOrDefault();
 
                 if (studentProfile == null)

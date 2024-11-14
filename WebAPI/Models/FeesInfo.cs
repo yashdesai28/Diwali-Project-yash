@@ -37,16 +37,16 @@ public class FeesInfo
         public int c_amount { get; set; }
         public string c_status { get; set; }
         public DateTime? c_paymentdate { get; set; }
-        public int? c_id { get; set; } // Add this for c_id  
+        public int? c_id { get; set; } 
     }
 
     public class PaymentRequest
     {
-        public int UserId { get; set; } // Maps to userId in the frontend
-        public string CurrentStandard { get; set; } // Current standard of the student
-        public int FeeStructureId { get; set; } // Fee structure ID (c_id)
-        public string Status { get; set; } // Set to "Completed" when payment is made
-        public DateTime PaymentDate { get; set; } // Current date of payment
+        public int UserId { get; set; }
+        public string CurrentStandard { get; set; }
+        public int FeeStructureId { get; set; }
+        public string Status { get; set; } 
+        public DateTime PaymentDate { get; set; } 
     }
 
 }

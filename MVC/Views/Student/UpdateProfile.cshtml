@@ -189,25 +189,24 @@
                     }
                 },
                 submitHandler: function (form) {
-                    // Form submit actions here
                     form.submit();
                 }
             });
 
-            // Trigger form submission validation on button click
+           
             @* $("#saveChangesButton").click(function () {
                 if ($("#editProfileForm").valid()) {
                     
                 }
             }); *@
 
-            // Initialize Kendo DatePicker in the edit form
+            
             $("#birthDate").kendoDatePicker({
                 format: "yyyy-MM-dd",
                 max: new Date()
             });
 
-            // Initialize Kendo Window for editing
+           
             var editProfileWindow = $("#editProfileWindow").kendoWindow({
                 title: "Edit Profile",
                 visible: false,
@@ -215,7 +214,7 @@
                 width: "400px"
             }).data("kendoWindow");
 
-            // Fetch profile data and display in CardsContainer
+           
             $.ajax({
                 url: `http://localhost:5064/api/Student/GetProfileById/${userId}`,
                 type: 'GET',
@@ -227,7 +226,6 @@
                 }
             });
 
-            // Function to render data in Kendo CardsContainer
             function renderProfileCards(data) {
                 console.log(data.imagepath, data);
                 var cardsHtml = `
@@ -267,7 +265,7 @@
 
                 $("#cardsContainer").html(cardsHtml);
 
-                // Open the edit form in Kendo Window on "Edit Profile" click
+                
                 $("#editButton").click(function () {
                     $("#name").val(data.name);
                     $("#email").val(data.email);
@@ -296,7 +294,7 @@
                 }
             }
 
-            // Update Profile on Save Changes button click
+            
         $("#saveChangesButton").click(function () {
             
                     

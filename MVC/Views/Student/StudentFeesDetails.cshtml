@@ -48,25 +48,22 @@
         var currentDate = new Date();
         function PayFees(dataItem, paymentMethod) {
     var currentDate = new Date();
-    var formattedDate = currentDate.toISOString();  // Converts the current date to ISO format
-
-    // Directly send the PaymentRequest object
+    var formattedDate = currentDate.toISOString();  
     var paymentData = {
         FeeStructureId: dataItem.c_id,
         UserId: userId,
-        PaymentDate: formattedDate,  // Send the formatted date
-        Status: "Completed",  // Ensure the Status field is included
-        CurrentStandard: dataItem.c_currentstandard,  // Ensure the CurrentStandard field is included
+        PaymentDate: formattedDate,  
+        Status: "Completed", 
+        CurrentStandard: dataItem.c_currentstandard,  
     };
 
-    // Log the paymentData to ensure all required fields are present
     console.log("Sending payment data:", paymentData);
 
     $.ajax({
         url: `http://localhost:5064/api/Student/PayFees`,
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify(paymentData),  // Send the data directly as PaymentRequest
+        data: JSON.stringify(paymentData), 
         success: function (response) {
             alert(`Payment by ${paymentMethod} was successful for Enrollment Number: ${dataItem.c_enrollment_number}`);
             $("#feesGrid").data("kendoGrid").dataSource.read();

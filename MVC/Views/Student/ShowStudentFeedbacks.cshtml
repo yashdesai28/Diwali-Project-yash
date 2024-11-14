@@ -46,8 +46,6 @@
                 }
             }
         });
-
-        // Initialize the Kendo Grid
         $("#grid").kendoGrid({
             dataSource: dataSource,
             columns: [
@@ -62,14 +60,13 @@
             filterable: true
         });
 
-        // Rebind the data source on create, update, or destroy operations
+        
         dataSource.bind("requestEnd", function (e) {
             if (e.type === "create" || e.type === "update" || e.type === "destroy") {
                 dataSource.read();
             }
         });
 
-        // Cancel any unsaved changes on grid action
         $("#grid").on("click", ".k-grid-cancel-changes", function () {
             dataSource.cancelChanges();
         });

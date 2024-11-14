@@ -46,6 +46,6 @@ public class Feedback
     public class Teacher
     {
         public int c_user_id { get; set; }
-        public string c_name { get; set; } // This will hold the teacher's name
+        public string c_name { get; set; } 
     }
 }

@@ -6,7 +6,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://kendo.cdn.telerik.com/2024.1.119/js/kendo.all.min.js"></script>
     <style>
-        /* Styling the card container */
         #cardsContainer {
             max-width: 600px;
             margin: 0 auto;
@@ -64,13 +63,13 @@
         }
 
         .profile-image {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;         
-            display: block;
-            margin: 0 auto;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
+        label.error {
+            color: red;
+        }
         #saveChangesButton:hover {
             background-color: #45a049;
         }
@@ -79,9 +78,11 @@
 
 <body>
 
+
     <div id="cardsContainer" class="k-cards-container"></div>
 
     <!-- Edit Profile Form in a Kendo Window -->
+
     <div id="editProfileWindow" style="display: none;">
         <form id="editProfileForm" enctype="multipart/form-data">
 
@@ -121,9 +122,84 @@
         </form>
     </div>
 
+    <!-- jQuery Library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- jQuery Validation Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+
+
+
+
     <script>
         $(document).ready(function () {
-            var userId = 150;  // Replace this with dynamic logic to get the userId
+            var userId = 149;  // Replace this with dynamic logic to get the userId
+
+            $("#editProfileForm").validate({
+                rules: {
+                    name: {
+                        required: true,
+                        minlength: 2
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    mobileNumber: {
+                        required: true,
+                        digits: true,
+                        minlength: 10,
+                        maxlength: 15
+                    },
+                    gender: {
+                        required: true
+                    },
+                    birthDate: {
+                        required: true,
+                        date: true
+                    },
+                    address: {
+                        required: true
+                    }
+                },
+                messages: {
+                    name: {
+                        required: "Please enter your name.",
+                        minlength: "Your name must be at least 2 characters long."
+                    },
+                    email: {
+                        required: "Please enter your email.",
+                        email: "Please enter a valid email address."
+                    },
+                    mobileNumber: {
+                        required: "Please enter your mobile number.",
+                        digits: "Only numbers are allowed.",
+                        minlength: "Your mobile number must be at least 10 digits long.",
+                        maxlength: "Your mobile number can't be longer than 15 digits."
+                    },
+                    gender: {
+                        required: "Please select your gender."
+                    },
+                    birthDate: {
+                        required: "Please enter your birth date.",
+                        date: "Please enter a valid date."
+                    },
+                    address: {
+                        required: "Please enter your address."
+                    }
+                },
+                submitHandler: function (form) {
+                    // Form submit actions here
+                    form.submit();
+                }
+            });
+
+            // Trigger form submission validation on button click
+            @* $("#saveChangesButton").click(function () {
+                if ($("#editProfileForm").valid()) {
+                    
+                }
+            }); *@
 
             // Initialize Kendo DatePicker in the edit form
             $("#birthDate").kendoDatePicker({
@@ -221,7 +297,10 @@
             }
 
             // Update Profile on Save Changes button click
-            $("#saveChangesButton").click(function () {
+        $("#saveChangesButton").click(function () {
+            
+                    
+                
 
                 var formData = new FormData();
                 formData.append("name", $("#name").val());
@@ -235,7 +314,7 @@
                 if (profileImage) {
                     formData.append("image", profileImage);
                 }
-
+            if ($("#editProfileForm").valid()) {
                 $.ajax({
                     url: `http://localhost:5064/api/Student/UpdateStudentProfile/${userId}`,
                     type: 'PUT',
@@ -245,12 +324,13 @@
                     success: function () {
                         editProfileWindow.close();
                         alert("Profile updated successfully!");
-                        location.reload();  // Reload to fetch updated data
+                        location.reload();
                     },
                     error: function () {
                         alert("Failed to update profile.");
                     }
                 });
+            }
             });
         });
     </script>

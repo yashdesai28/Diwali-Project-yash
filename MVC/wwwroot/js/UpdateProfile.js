@@ -2,6 +2,7 @@
 
 $(document).ready(function () {
     let userId = 142;  // Replace this with dynamic logic to get the userId
+    let window; // Define window here to use globally
 
     // Initialize Kendo DatePicker for birth date
     $("#datepicker").kendoDatePicker({
@@ -31,6 +32,22 @@ $(document).ready(function () {
         }
     });
 
+
+    function fatch() {
+        $.ajax({
+            url: `http://localhost:5064/api/Student/GetProfileById/${userId}`,
+            type: 'GET',
+            success: function (data) {
+                renderProfileCards(data);
+            },
+            error: function () {
+                alert("Failed to load profile data.");
+            }
+        });
+    }
+
+
+
     // Function to render profile data in Kendo Cards
     function renderProfileCards(data) {
         var cardsHtml = `
@@ -38,7 +55,7 @@ $(document).ready(function () {
             <div class="k-card-header">
                 <h5 class="k-card-title">${data.name}</h5>
             </div>
-            <img alt="${data.name} Profile" class="k-card-media image-large" src="/${data.imagepath}" />
+            <img alt="${data.name} Profile" class="k-card-media image-large" src="${apihost}/${data.imagepath}" />
             <div class="k-card-body">
                 <p>
                     <strong>Email:</strong> ${data.email} <br />
@@ -72,7 +89,7 @@ $(document).ready(function () {
             }
 
             // Initialize Kendo Window for the modal and center it on screen
-            var window = $("#editModal").kendoWindow({
+            window = $("#editModal").kendoWindow({
                 width: "400px",
                 title: "Edit Profile",
                 visible: false,
@@ -161,23 +178,20 @@ $(document).ready(function () {
                 console.log(key + ": " + (value instanceof File ? value.name : value));
             });
 
-            // Additional AJAX submission can be added here
-
-            // $.ajax({
-            //     url: `http://localhost:5064/api/Student/UpdateStudentProfile/${userId}`,
-            //     type: 'PUT',
-            //     data: formData,
-            //     contentType: false,
-            //     processData: false,
-            //     success: function () {
-            //         $("#editModal").data("kendoWindow").close();
-            //         alert("Profile updated successfully!");
-            //         location.reload();  // Reload to fetch updated data
-            //     },
-            //     error: function () {
-            //         alert("Failed to update profile.");
-            //     }
-            // });
+            $.ajax({
+                url: `http://localhost:5064/api/Teacher/UpdateTeacherProfile/${userId}`,
+                type: 'PUT',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    window.close();
+                    fatch();
+                },
+                error: function () {
+                    alert("Failed to update profile.");
+                }
+            });
         }
 
     });

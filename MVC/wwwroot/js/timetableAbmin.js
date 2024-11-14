@@ -613,7 +613,7 @@ $(document).ready(function () {
             });
 
             const teacherAssignments = {};
-            const assignedTeachers = {}; // This was missing in the original code
+           
 
             // Prepare teacher assignments once timetable data is available
             data.timetables.forEach(({ c_standard, c_subject_name, c_name }) => {
@@ -625,6 +625,7 @@ $(document).ready(function () {
             });
             const startDate = new Date("2024-01-01");
             const allTimeTables = [];  // Array to hold the timetable for all standards
+            const assignedTeachers = {};  // Track teachers' assignments
             
             const generateTimeTableForAllStandards = () => {
                 const standards = Object.keys(teacherAssignments);  // Assuming teacherAssignments contains all standards
@@ -640,22 +641,18 @@ $(document).ready(function () {
                     { label: "4:00 PM - 5:00 PM", start: "16:00", end: "17:00" },
                 ];
             
-                const assignedTeachers = {};  // Track teachers' assignments
-            
                 standards.forEach((standard) => {
                     let idCounter = 1;
                     const TimeTable = [];
                     const subjects = Object.keys(teacherAssignments[standard] || {});
-                    
             
                     days.forEach((day, dayIndex) => {
                         const currentDay = new Date(startDate);
                         currentDay.setDate(startDate.getDate() + dayIndex);
             
-                        let subjectIndex = 0;
                         const assignedSubjects = new Set();  // Track assigned subjects for the day
             
-                        times.forEach((time) => {
+                        times.forEach((time, timeIndex) => {
                             let title = "No Lecture";
                             let teacher = "N/A";
             
@@ -673,17 +670,14 @@ $(document).ready(function () {
                                 return;
                             }
             
-                            // Subject and teacher assignment logic
-                            let attempts = 0;  // To prevent infinite loops
-                            while (subjectIndex < subjects.length && attempts < subjects.length) {
+                            // Attempt to assign a subject and teacher if no prior assignment is made
+                            for (let subjectIndex = 0; subjectIndex < subjects.length; subjectIndex++) {
                                 const subject = subjects[subjectIndex];
                                 teacher = teacherAssignments[standard][subject];
-            
-                                // Ensure teacher isn’t assigned elsewhere at this time for any other standard
                                 const timeSlotKey = `${day}-${time.label}`;
                                 let conflictFound = false;
             
-                                // Check for conflicts across all standards
+                                // Check for conflicts across all standards for the same teacher at this time
                                 for (const std in assignedTeachers) {
                                     if (assignedTeachers[std][timeSlotKey] && assignedTeachers[std][timeSlotKey].includes(teacher)) {
                                         conflictFound = true;
@@ -691,12 +685,12 @@ $(document).ready(function () {
                                     }
                                 }
             
-                                // If no conflict found, assign the teacher
+                                // If no conflict is found and the subject has not been assigned already, proceed
                                 if (!conflictFound && !assignedSubjects.has(subject)) {
                                     title = `${subject} by ${teacher}`;
                                     assignedSubjects.add(subject);
             
-                                    // Track teacher assignment for this time slot
+                                    // Track the teacher's assignment for this time slot
                                     if (!assignedTeachers[standard]) {
                                         assignedTeachers[standard] = {};
                                     }
@@ -705,32 +699,11 @@ $(document).ready(function () {
                                     }
                                     assignedTeachers[standard][timeSlotKey].push(teacher);
             
-                                    subjectIndex++;  // Move to the next subject
-                                    break;  // Exit the loop if successful assignment
-                                } else {
-                                    // Conflict found or subject already assigned, try next subject
-                                    subjectIndex = (subjectIndex + 1) % subjects.length;
-                                    attempts++;
+                                    break;  // Exit the loop if assignment is successful
                                 }
                             }
             
-                            // If no subject has been assigned to this time slot, fill it with "No Lecture"
-                            if (title === "No Lecture") {
-                                // Check if slot is free and assign another subject if available
-                                for (const subject of subjects) {
-                                    let foundFreeSlot = false;
-                                    teacher = teacherAssignments[standard][subject];
-                                    if (!assignedSubjects.has(subject)) {
-                                        // Try assigning this subject
-                                        title = `${subject} by ${teacher}`;
-                                        assignedSubjects.add(subject);
-                                        foundFreeSlot = true;
-                                        break;
-                                    }
-                                }
-                            }
-            
-                            // Add the time slot to the timetable
+                            // If no assignment is possible, retain "No Lecture"
                             TimeTable.push({
                                 id: idCounter++,
                                 day: day,
@@ -752,6 +725,7 @@ $(document).ready(function () {
             };
             
             generateTimeTableForAllStandards();
+            
             
             
 

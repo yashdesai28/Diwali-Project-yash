@@ -131,6 +131,10 @@
         $(document).ready(function () {
             // Initialize the Kendo Window for the edit modal
 
+            let userId = 142;
+
+            console.log("dash");
+
             $("#notification").kendoNotification({
                 position: {
                     pinned: true,
@@ -170,7 +174,7 @@
                 $.ajax({
                     url: 'http://localhost:5064/api/Teacher/getclassWiseStudent',
                     method: 'GET',
-                    data: { id: 1 },
+                    data: { id: userId },
                     success: function (data) {
                         renderCards(data);
                     },
@@ -204,7 +208,7 @@
                             <h5 class="k-card-title">${item.name}</h5>
                             <h6 class="k-card-subtitle">Standard: <span class="standard-display">${item.standard}</span></h6>
                         </div>
-                        <img alt="${item.name} Profile" class="k-card-media image-large" src="/${item.image}" />
+                        <img alt="${item.name} Profile" class="k-card-media image-large" src="${apihost}/${item.image}" />
                         <div class="k-card-body">
                             <p>
                                 <strong>Email:</strong> ${item.email} <br />
